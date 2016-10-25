@@ -112,23 +112,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void sendData() {
-        String urlString = ""; //TODO url
-
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("User-Agent", "MC-Android");
-            conn.setDoOutput(true);
-            DataOutputStream dataOutputStream = new DataOutputStream(conn.getOutputStream());
-            dataOutputStream.writeBytes(jsonTracks.toString());
-            dataOutputStream.flush();
-            dataOutputStream.close();
-            int responseCode = conn.getResponseCode();
-            System.out.println("ResponseCode: " + responseCode);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+       new UploadTrackTask().execute(jsonTracks);
     }
 
     protected synchronized void startTracking() {
