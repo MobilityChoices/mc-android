@@ -34,14 +34,15 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    GoogleApiClient myGoogleApiClient;
-    LocationRequest myLocationRequest;
+    GoogleApiClient googleApiClient;
+    LocationRequest locationRequest;
 
     TextView latitude;
     TextView longitude;
     TextView time;
     Button startStopBtn;
     ListView trackList;
+
     boolean isTracking;
     ArrayList<MCLocation> locations;
     DbFacade dbFacade;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         startStopBtn.setOnClickListener(view -> {
             isTracking = !isTracking;
             if (isTracking) {
-                startStopBtn.setText("Stop");
+                startStopBtn.setText(R.string.stop);
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     System.out.println("permission check failed");
                     return;
                 }
-                LocationServices.FusedLocationApi.requestLocationUpdates(myGoogleApiClient, myLocationRequest, this);
+                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
 
                 locations = new ArrayList<>();
 
@@ -88,8 +89,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             } else {
                 JSONArray jsonTracks = new JSONArray();
-                startStopBtn.setText("Start");
-                LocationServices.FusedLocationApi.removeLocationUpdates(myGoogleApiClient, this);
+                startStopBtn.setText(R.string.start);
+                LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
                 String[] listItems = new String[locations.size()];
                 for (int i = 0; i < locations.size(); i++) {
                     MCLocation location = locations.get(i);
@@ -104,22 +105,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                //send data to server
                 new UploadTrackTask().execute(jsonTracks);
             }
         });
 
-        myGoogleApiClient.connect();
+        googleApiClient.connect();
     }
 
     protected synchronized void startTracking() {
-        myGoogleApiClient = new GoogleApiClient.Builder(this)
+        googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
 
-        myLocationRequest = LocationRequest.create()
+        locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)
                 .setFastestInterval(1000);
@@ -139,12 +139,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
 
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -160,8 +156,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        latitude.setText("Latutude: An error occured!");
-        longitude.setText("Longitude: An error occured!");
+        latitude.setText(R.string.latitudeError);
+        longitude.setText(R.string.longitudeError);
     }
 
     @Override
@@ -170,8 +166,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     protected void handleNewLocation(MCLocation location) {
-        latitude.setText("Latitude: " + String.valueOf(location.getLatitude()));
-        longitude.setText("Longitude: " + String.valueOf(location.getLongitude()));
+        latitude.setText(String.format("%s%s", getString(R.string.latitude), String.valueOf(location.getLatitude())));
+        longitude.setText(String.format("%s%s", getString(R.string.longitude), String.valueOf(location.getLongitude())));
         long currentTimeMillis = System.currentTimeMillis();
         Date date = new Date(currentTimeMillis);
         time.setText(date.toString());
