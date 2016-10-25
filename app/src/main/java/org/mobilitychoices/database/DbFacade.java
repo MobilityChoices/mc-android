@@ -17,7 +17,7 @@ public class DbFacade {
 
     public long saveLocation(MCLocation location, long currentTrack) {
         ContentValues values = new ContentValues();
-        values.put(TrackContract.LocationEntry.COLUMN_TRACKID, currentTrack);
+        values.put(TrackContract.LocationEntry.COLUMN_TRACK_ID, currentTrack);
         values.put(TrackContract.LocationEntry.COLUMN_LATITUDE, location.getLatitude());
         values.put(TrackContract.LocationEntry.COLUMN_LONGITUDE, location.getLongitude());
         values.put(TrackContract.LocationEntry.COLUMN_ALTITUDE, location.getAltitude());

@@ -12,11 +12,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
 
-public class UploadTrackTask extends AsyncTask {
+public class UploadTrackTask extends AsyncTask<JSONArray, Void, Void> {
     @Override
-    protected Object doInBackground(Object[] objects) {
+    protected Void doInBackground(JSONArray... jsonArrays) {
         JSONObject object = new JSONObject();
-        JSONArray tracks = (JSONArray) objects[0];
+        JSONArray tracks = jsonArrays[0];
         String urlString = "http://172.22.13.195:3000/track";
 
         try {

@@ -12,17 +12,21 @@ class TracksOpenHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 3;
 
     private static final String TRACKS_TABLE_CREATE =
-            "CREATE TABLE " + TRACKS_TABLE_NAME + " (" + TrackContract.TrackEntry._ID +" INTEGER PRIMARY KEY, " +
-                    TrackContract.TrackEntry.COLUMN_TIME +" INTEGER);";
+            "CREATE TABLE " + TRACKS_TABLE_NAME + " (" +
+                    TrackContract.TrackEntry._ID + " INTEGER PRIMARY KEY, " +
+                    TrackContract.TrackEntry.COLUMN_TIME + " INTEGER" +
+                    ");";
 
     private static final String LOCATION_TABLE_CREATE =
-            "CREATE TABLE " + LOCATION_TABLE_NAME + " (" + TrackContract.LocationEntry._ID +
-                    " INTEGER PRIMARY KEY, " + TrackContract.LocationEntry.COLUMN_TRACKID +" INTEGER," +
-                    TrackContract.LocationEntry.COLUMN_LATITUDE +
-                    " DOUBLE, " + TrackContract.LocationEntry.COLUMN_LONGITUDE +
-                    " DOUBLE, " + TrackContract.LocationEntry.COLUMN_ALTITUDE +" DOUBLE, " +
+            "CREATE TABLE " + LOCATION_TABLE_NAME + " (" +
+                    TrackContract.LocationEntry._ID + " INTEGER PRIMARY KEY, " +
+                    TrackContract.LocationEntry.COLUMN_TRACK_ID + " INTEGER, " +
+                    TrackContract.LocationEntry.COLUMN_LATITUDE + " DOUBLE, " +
+                    TrackContract.LocationEntry.COLUMN_LONGITUDE + " DOUBLE, " +
+                    TrackContract.LocationEntry.COLUMN_ALTITUDE + " DOUBLE, " +
                     TrackContract.LocationEntry.COLUMN_SPEED + " DOUBLE, " +
-                    TrackContract.LocationEntry.COLUMN_TIME +" INTEGER);";
+                    TrackContract.LocationEntry.COLUMN_TIME + " INTEGER" +
+                    ");";
 
     TracksOpenHelper(Context context) {
         super(context, "TrackDatabase.db", null, DATABASE_VERSION);
