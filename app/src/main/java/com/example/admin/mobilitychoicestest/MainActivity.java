@@ -1,15 +1,11 @@
 package com.example.admin.mobilitychoicestest;
 
 import android.Manifest;
-import android.content.ContentValues;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -43,9 +39,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     Button startStopBtn;
     ListView trackList;
     boolean isTracking;
-    ArrayList<MCLocation> tracks;
-    JSONArray jsonTracks;
-    TracksOpenHelper helper;
+    ArrayList<MCLocation> locations;
+    DbFacade dbFacade;
 
     long currentTrack;
 
@@ -62,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         startStopBtn = (Button) findViewById(R.id.startStopBtn);
         trackList = (ListView) findViewById(R.id.trackList);
 
-        helper = new TracksOpenHelper(getApplicationContext());
+        dbFacade = new DbFacade(getApplicationContext());
         startTracking();
 
         startStopBtn.setOnClickListener(view -> {
@@ -82,20 +77,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
                 LocationServices.FusedLocationApi.requestLocationUpdates(myGoogleApiClient, myLocationRequest, this);
 
-                tracks = new ArrayList<>();
-                jsonTracks = new JSONArray();
+                locations = new ArrayList<>();
 
-                SQLiteDatabase db = helper.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put(TrackContract.TrackEntry.COLUMN_TIME, System.currentTimeMillis());
-                currentTrack = db.insert(TrackContract.TrackEntry.TRACKS_TABLE_NAME, null, values);
+                currentTrack = dbFacade.saveTrack(System.currentTimeMillis());
+
 
             } else {
+                JSONArray jsonTracks = new JSONArray();
                 startStopBtn.setText("Start");
                 LocationServices.FusedLocationApi.removeLocationUpdates(myGoogleApiClient, this);
-                String[] listItems = new String[tracks.size()];
-                for (int i = 0; i < tracks.size(); i++) {
-                    MCLocation location = tracks.get(i);
+                String[] listItems = new String[locations.size()];
+                for (int i = 0; i < locations.size(); i++) {
+                    MCLocation location = locations.get(i);
                     listItems[i] = "Lat: " + location.getLatitude() + "; Lng: " + location.getLongitude();
                     jsonTracks.put(location.toJSON());
                 }
@@ -107,25 +100,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                sendData();
+                //send data to server
+                new UploadTrackTask().execute(jsonTracks);
             }
         });
 
         myGoogleApiClient.connect();
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
-    }
-
-    private void sendData() {
-       new UploadTrackTask().execute(jsonTracks);
     }
 
     protected synchronized void startTracking() {
-        myGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
+        myGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
-        myLocationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setInterval(10 * 1000).setFastestInterval(1000);
+        myLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10 * 1000)
+                .setFastestInterval(1000);
     }
 
     @Override
@@ -152,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        //diese Methode wird aufgerufen wenn die Verbindung zur Google API erfolgreich ist
         startStopBtn.setEnabled(true);
 
     }
@@ -180,19 +172,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Date date = new Date(currentTimeMillis);
         time.setText(date.toString());
 
-        tracks.add(location);
+        locations.add(location);
 
-        //put information into local db
-        SQLiteDatabase db = helper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(TrackContract.LocationEntry.COLUMN_TRACKID, currentTrack);
-        values.put(TrackContract.LocationEntry.COLUMN_LATITUDE, location.getLatitude());
-        values.put(TrackContract.LocationEntry.COLUMN_LONGITUDE, location.getLongitude());
-        values.put(TrackContract.LocationEntry.COLUMN_ALTITUDE, location.getAltitude());
-        values.put(TrackContract.LocationEntry.COLUMN_SPEED, location.getSpeed());
-        values.put(TrackContract.LocationEntry.COLUMN_TIME, location.getTime());
+        long id = dbFacade.saveLocation(location, currentTrack);
 
-        long id = db.insert(TrackContract.LocationEntry.LOCATION_TABLE_NAME, null, values);
         System.out.println("New location db-id: " +id);
 
     }
