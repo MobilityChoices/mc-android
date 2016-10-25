@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">MobilityChoicesTest</string>
+    <string name="app_name">Mobility Choices</string>
     <string name="action_settings">Settings</string>
     <string name="stop">Stop</string>
     <string name="start">Start</string>
-    <string name="latitudeError">Latitude: An error occured!</string>
-    <string name="longitudeError">Longitude: An error occured!</string>
+    <string name="latitudeError">Latitude: An error occurred!</string>
+    <string name="longitudeError">Longitude: An error occurred!</string>
     <string name="latitude">"Latitude: "</string>
     <string name="longitude">"Longitude: "</string>
 </resources>
