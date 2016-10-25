@@ -1,7 +1,9 @@
 package com.example.admin.mobilitychoicestest;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -43,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     boolean isTracking;
     ArrayList<MCLocation> tracks;
     JSONArray jsonTracks;
+    TracksOpenHelper helper;
+
+    long currentTrack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         startStopBtn = (Button) findViewById(R.id.startStopBtn);
         trackList = (ListView) findViewById(R.id.trackList);
 
+        helper = new TracksOpenHelper(getApplicationContext());
         startTracking();
 
         startStopBtn.setOnClickListener(view -> {
@@ -78,6 +84,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                 tracks = new ArrayList<>();
                 jsonTracks = new JSONArray();
+
+                SQLiteDatabase db = helper.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put(TrackContract.TrackEntry.COLUMN_TIME, System.currentTimeMillis());
+                currentTrack = db.insert(TrackContract.TrackEntry.TRACKS_TABLE_NAME, null, values);
 
             } else {
                 startStopBtn.setText("Start");
@@ -171,7 +182,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         tracks.add(location);
 
-        System.out.println(location.toJSON());
+        //put information into local db
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(TrackContract.LocationEntry.COLUMN_TRACKID, currentTrack);
+        values.put(TrackContract.LocationEntry.COLUMN_LATITUDE, location.getLatitude());
+        values.put(TrackContract.LocationEntry.COLUMN_LONGITUDE, location.getLongitude());
+        values.put(TrackContract.LocationEntry.COLUMN_ALTITUDE, location.getAltitude());
+        values.put(TrackContract.LocationEntry.COLUMN_SPEED, location.getSpeed());
+        values.put(TrackContract.LocationEntry.COLUMN_TIME, location.getTime());
+
+        long id = db.insert(TrackContract.LocationEntry.LOCATION_TABLE_NAME, null, values);
+        System.out.println("New location db-id: " +id);
 
     }
 }
