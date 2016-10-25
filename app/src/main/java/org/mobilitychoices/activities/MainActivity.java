@@ -1,4 +1,4 @@
-package com.example.admin.mobilitychoicestest;
+package org.mobilitychoices.activities;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -24,6 +24,10 @@ import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.mobilitychoices.R;
+import org.mobilitychoices.database.DbFacade;
+import org.mobilitychoices.entities.MCLocation;
+import org.mobilitychoices.remote.UploadTrackTask;
 
 import java.util.ArrayList;
 import java.util.Date;

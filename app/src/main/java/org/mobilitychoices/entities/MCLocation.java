@@ -1,7 +1,6 @@
-package com.example.admin.mobilitychoicestest;
+package org.mobilitychoices.entities;
 
 import android.location.Location;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 

@@ -1,17 +1,13 @@
-package com.example.admin.mobilitychoicestest;
+package org.mobilitychoices.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static com.example.admin.mobilitychoicestest.TrackContract.LocationEntry.LOCATION_TABLE_NAME;
-import static com.example.admin.mobilitychoicestest.TrackContract.TrackEntry.TRACKS_TABLE_NAME;
+import static org.mobilitychoices.database.TrackContract.LocationEntry.LOCATION_TABLE_NAME;
+import static org.mobilitychoices.database.TrackContract.TrackEntry.TRACKS_TABLE_NAME;
 
-/**
- * Created by admin on 25/10/2016.
- */
-
-public class TracksOpenHelper extends SQLiteOpenHelper {
+class TracksOpenHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 3;
 
@@ -28,7 +24,7 @@ public class TracksOpenHelper extends SQLiteOpenHelper {
                     TrackContract.LocationEntry.COLUMN_SPEED + " DOUBLE, " +
                     TrackContract.LocationEntry.COLUMN_TIME +" INTEGER);";
 
-    public TracksOpenHelper(Context context) {
+    TracksOpenHelper(Context context) {
         super(context, "TrackDatabase.db", null, DATABASE_VERSION);
     }
 
@@ -42,5 +38,4 @@ public class TracksOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
     }
-
 }

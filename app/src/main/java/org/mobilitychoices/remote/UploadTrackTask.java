@@ -1,4 +1,4 @@
-package com.example.admin.mobilitychoicestest;
+package org.mobilitychoices.remote;
 
 import android.os.AsyncTask;
 
@@ -10,10 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-/**
- * Created by admin on 25/10/2016.
- */
+import java.util.Arrays;
 
 public class UploadTrackTask extends AsyncTask {
     @Override
@@ -31,15 +28,13 @@ public class UploadTrackTask extends AsyncTask {
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
             DataOutputStream dataOutputStream = new DataOutputStream(conn.getOutputStream());
-            System.out.println(object.toString().getBytes());
+            System.out.println(Arrays.toString(object.toString().getBytes()));
             dataOutputStream.write(object.toString().getBytes());
             dataOutputStream.flush();
             dataOutputStream.close();
             int responseCode = conn.getResponseCode();
             System.out.println("ResponseCode: " + responseCode);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
         return null;

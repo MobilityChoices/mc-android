@@ -1,16 +1,14 @@
-package com.example.admin.mobilitychoicestest;
+package org.mobilitychoices.database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-/**
- * Created by admin on 25/10/2016.
- */
+import org.mobilitychoices.entities.MCLocation;
 
 public class DbFacade {
 
-    SQLiteDatabase db;
+    private SQLiteDatabase db;
 
     public DbFacade(Context context) {
         TracksOpenHelper helper = new TracksOpenHelper(context);
