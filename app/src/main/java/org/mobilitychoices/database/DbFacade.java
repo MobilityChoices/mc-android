@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import org.mobilitychoices.entities.MCLocation;
+import org.mobilitychoices.entities.Location;
 
 public class DbFacade {
 
@@ -15,7 +15,7 @@ public class DbFacade {
         db = helper.getWritableDatabase();
     }
 
-    public long saveLocation(MCLocation location, long currentTrack) {
+    public long saveLocation(Location location, long currentTrack) {
         ContentValues values = new ContentValues();
         values.put(TrackContract.LocationEntry.COLUMN_TRACK_ID, currentTrack);
         values.put(TrackContract.LocationEntry.COLUMN_LATITUDE, location.getLatitude());

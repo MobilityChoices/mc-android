@@ -1,17 +1,16 @@
 package org.mobilitychoices.entities;
 
-import android.location.Location;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MCLocation {
+public class Location {
     private double latitude;
     private double longitude;
     private double altitude;
     private double speed;
     private long time;
 
-    public MCLocation(Location location) {
+    public Location(android.location.Location location) {
         this.latitude = location.getLatitude();
         this.longitude = location.getLongitude();
         this.altitude = location.getAltitude();

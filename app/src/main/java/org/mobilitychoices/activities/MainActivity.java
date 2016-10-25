@@ -2,7 +2,6 @@ package org.mobilitychoices.activities;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,7 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.mobilitychoices.R;
 import org.mobilitychoices.database.DbFacade;
-import org.mobilitychoices.entities.MCLocation;
+import org.mobilitychoices.entities.Location;
 import org.mobilitychoices.remote.UploadTrackTask;
 
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     ListView trackList;
 
     boolean isTracking;
-    ArrayList<MCLocation> locations;
+    ArrayList<Location> locations;
     DbFacade dbFacade;
 
     long currentTrack;
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
                 String[] listItems = new String[locations.size()];
                 for (int i = 0; i < locations.size(); i++) {
-                    MCLocation location = locations.get(i);
+                    Location location = locations.get(i);
                     listItems[i] = "Lat: " + location.getLatitude() + "; Lng: " + location.getLongitude();
                     jsonTracks.put(location.toJSON());
                 }
@@ -161,11 +160,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(new MCLocation(location));
+    public void onLocationChanged(android.location.Location location) {
+        handleNewLocation(new Location(location));
     }
 
-    protected void handleNewLocation(MCLocation location) {
+    protected void handleNewLocation(Location location) {
         latitude.setText(String.format("%s%s", getString(R.string.latitude), String.valueOf(location.getLatitude())));
         longitude.setText(String.format("%s%s", getString(R.string.longitude), String.valueOf(location.getLongitude())));
         long currentTimeMillis = System.currentTimeMillis();
