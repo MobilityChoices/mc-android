@@ -1,6 +1,8 @@
 package org.mobilitychoices.activities;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -157,7 +159,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            new UploadTrackTask().execute(jsonTracks);
+
+            SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+            String token = sharedPreferences.getString("token", null);
+            new UploadTrackTask(token).execute(jsonTracks);
         }
     }
 

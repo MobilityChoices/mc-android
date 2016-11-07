@@ -4,9 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -25,6 +27,7 @@ import android.widget.EditText;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mobilitychoices.R;
+import org.mobilitychoices.entities.Token;
 import org.mobilitychoices.entities.User;
 import org.mobilitychoices.remote.LoginTask;
 
@@ -43,9 +46,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    SharedPreferences sharedPref;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -110,10 +117,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
         }
 
         if (cancel) {
@@ -136,6 +139,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Log.i(LoginActivity.class.getName(), String.valueOf(response.getCode()));
                 showProgress(false);
 
+                Token data = (Token) response.getData();
+                String token = data.getToken();
+
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("token", token);
+                editor.commit();
+
                 if (response.getCode() == 200) {
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -146,15 +156,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             }).execute(jsonObject);
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO validate email
-
-        if (email.contains("@")) {
-            return true;
-        }
-        return true;
     }
 
     private boolean isPasswordValid(String password) {

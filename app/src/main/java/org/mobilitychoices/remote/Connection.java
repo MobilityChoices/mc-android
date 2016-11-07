@@ -1,5 +1,7 @@
 package org.mobilitychoices.remote;
 
+import android.util.Pair;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mobilitychoices.entities.Entity;
@@ -10,20 +12,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 public class Connection<T extends Entity> {
 
-    public Response request(String urlString, JSONObject object, Class<T> cls) {
+    public Response request(String urlString, JSONObject object, List<Pair<String, String>> headers, Class<T> cls) {
         Response<T> response = null;
 
         try {
-            URL url = new URL(urlString);
+            URL url = new URL("http://172.22.13.195:3000" + urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("User-Agent", "MC-Android");
             conn.setRequestProperty("Content-Type", "application/json");
+            if (headers != null) {
+                for (Pair<String, String> p : headers) {
+                    conn.setRequestProperty(p.first, p.second);
+                }
+            }
             conn.setDoOutput(true);
-
             DataOutputStream dataOutputStream = new DataOutputStream(conn.getOutputStream());
 
             try {
@@ -58,10 +65,10 @@ public class Connection<T extends Entity> {
 
             T data = null;
             ResponseError error = null;
-            if(200 <= responseCode && responseCode <= 299){
+            if (200 <= responseCode && responseCode <= 299) {
                 data = (T) cls.newInstance();
                 data.fromJSON(jsonResult);
-            }else{
+            } else {
                 error = new ResponseError("", "", "");
             }
 

@@ -16,8 +16,8 @@ public class RegisterTask extends AsyncTask<JSONObject,Void,Response<Object>> {
     @Override
     protected Response<Object> doInBackground(JSONObject... jsonObject) {
         JSONObject object = jsonObject[0];
-        String urlString = "http://172.22.13.195:3000/auth/register";
-        return new Connection().request(urlString, object, Entity.class);
+        String urlString = "/auth/register";
+        return new Connection().request(urlString, object,null, Entity.class);
     }
 
     @Override

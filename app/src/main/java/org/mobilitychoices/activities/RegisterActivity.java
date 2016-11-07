@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import org.mobilitychoices.R;
 import org.mobilitychoices.entities.User;
 import org.mobilitychoices.remote.RegisterTask;
+import org.mobilitychoices.remote.ResponseError;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -72,7 +73,12 @@ public class RegisterActivity extends AppCompatActivity {
                         setResult(Activity.RESULT_OK, resultData);
                         finish();
                     } else {
-                        //TODO set correct error
+                        if(response.getCode() == 400){
+                            ResponseError error = response.getError();
+                            //TODO handle error
+                        }else if(response.getCode() == 500){
+                            //Server Error
+                        }
                     }
                 }).execute(jsonObject);
             }

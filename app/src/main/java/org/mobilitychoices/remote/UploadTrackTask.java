@@ -1,47 +1,37 @@
 package org.mobilitychoices.remote;
 
 import android.os.AsyncTask;
+import android.util.Pair;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mobilitychoices.entities.Entity;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UploadTrackTask extends AsyncTask<JSONArray, Void, Void> {
+public class UploadTrackTask extends AsyncTask<Object, Object, Response> {
+
+    private String token;
+
+    public UploadTrackTask(String token){
+        this.token = token;
+    }
+
     @Override
-    protected Void doInBackground(JSONArray... jsonArrays) {
+    protected Response doInBackground(Object... jsonArrays) {
         JSONObject object = new JSONObject();
-        JSONArray tracks = jsonArrays[0];
-        String urlString = "http://172.22.13.195:3000/tracks";
-//        String urlString = "http://192.168.0.103:3000/tracks";
-
+        Object tracks = jsonArrays[0];
+        String urlString = "/tracks";
         try {
-            object.put("data", tracks);
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("User-Agent", "MC-Android");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setDoOutput(true);
-
-            DataOutputStream dataOutputStream = new DataOutputStream(conn.getOutputStream());
-            System.out.println(Arrays.toString(object.toString().getBytes()));
-
-            dataOutputStream.write(object.toString().getBytes());
-            dataOutputStream.flush();
-            dataOutputStream.close();
-
-            int responseCode = conn.getResponseCode();
-            System.out.println("ResponseCode: " + responseCode);
-        } catch (IOException | JSONException e) {
+            object.put("locations", tracks);
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        return null;
+
+        List<Pair<String, String>> headers = new ArrayList<>();
+        headers.add(new Pair<>("Authorization", token));
+        return new Connection().request(urlString, object, headers, Entity.class);
     }
 
 }

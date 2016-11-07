@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import org.json.JSONObject;
 import org.mobilitychoices.entities.Entity;
+import org.mobilitychoices.entities.Token;
 
 public class LoginTask extends AsyncTask<JSONObject,Void,Response<Object>> {
 
@@ -16,8 +17,8 @@ public class LoginTask extends AsyncTask<JSONObject,Void,Response<Object>> {
     @Override
     protected Response<Object> doInBackground(JSONObject... jsonObjects) {
         JSONObject object = jsonObjects[0];
-        String urlString = "http://172.22.13.195:3000/auth/login";
-        return new Connection().request(urlString, object, Entity.class);
+        String urlString = "/auth/login";
+        return new Connection().request(urlString, object, null, Token.class);
     }
     @Override
     protected void onPostExecute(Response<Object> result) {
