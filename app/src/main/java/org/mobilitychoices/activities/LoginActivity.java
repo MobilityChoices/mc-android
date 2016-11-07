@@ -4,16 +4,19 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.ActivityNotFoundException;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.media.tv.TvInputService;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -21,11 +24,14 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.mobilitychoices.R;
+import org.mobilitychoices.entities.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * A login screen that offers login via email/password.
@@ -34,6 +40,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private static final int REGISTER_REQUEST_CODE = 101;
     private boolean isRegister;
+    private User currentUser;
     /**
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
@@ -129,7 +136,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-//        return email.contains("@") && email.contains(".");
+        //TODO validate email
+
+        if (email.contains("@")) {
+            return true;
+        }
         return true;
     }
 
@@ -276,7 +287,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (success) {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                intent.putExtra("userCode", 0); //TODO userCode
+                intent.putExtra("user", currentUser);
                 startActivity(intent);
                 finish();
             } else {
@@ -303,9 +314,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 //TODO handle result here
-                String email = data.getExtras().getString("email");
-                String password = data.getExtras().getString("password");
-                System.out.println("OnActivityResult: " + email + " : " + password);
+                User user = (User) data.getExtras().getSerializable("user");
+                currentUser = user;
+                System.out.println("OnActivityResult: " + user.getEmail().toString() + " : " + user.getPasswort().toString());
             }
         }
     }

@@ -10,13 +10,52 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.mobilitychoices.activities.RegisterActivity">
 
+    <EditText
+        android:id="@+id/email_register_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:hint="@string/email_register_form"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/username_register_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/username_register"
+        android:inputType="text"
+        android:layout_below="@+id/email_register_form"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="23dp" />
+
+    <EditText
+        android:id="@+id/password_register_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password_register"
+        android:inputType="textPassword"
+        android:layout_below="@+id/username_register_form"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="18dp" />
+
+    <EditText
+        android:id="@+id/password_confirm_register_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password_confirm_register"
+        android:inputType="textPassword"
+        android:layout_below="@+id/password_register_form"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="24dp" />
 
     <Button
-        android:text="Register"
+        android:id="@+id/registerBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="61dp"
-        android:id="@+id/registerBtn" />
+        android:layout_marginTop="57dp"
+        android:text="@string/register"
+        android:layout_below="@+id/password_confirm_register_form"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
