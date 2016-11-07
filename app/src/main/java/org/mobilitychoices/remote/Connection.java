@@ -17,12 +17,16 @@ import java.util.List;
 public class Connection<T extends Entity> {
 
     public Response request(String urlString, JSONObject object, List<Pair<String, String>> headers, Class<T> cls) {
+        return request(urlString, object, headers, cls, "POST");
+    }
+
+    public Response request(String urlString, JSONObject object, List<Pair<String, String>> headers, Class<T> cls, String requestMethod) {
         Response<T> response = null;
 
         try {
             URL url = new URL("http://172.22.13.195:3000" + urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(requestMethod);
             conn.setRequestProperty("User-Agent", "MC-Android");
             conn.setRequestProperty("Content-Type", "application/json");
             if (headers != null) {
@@ -30,18 +34,23 @@ public class Connection<T extends Entity> {
                     conn.setRequestProperty(p.first, p.second);
                 }
             }
-            conn.setDoOutput(true);
-            DataOutputStream dataOutputStream = new DataOutputStream(conn.getOutputStream());
+            if(!requestMethod.equals("GET")){
+                conn.setDoOutput(true);
+                DataOutputStream dataOutputStream = new DataOutputStream(conn.getOutputStream());
 
-            try {
-                System.out.println(object.toString(4));
-            } catch (JSONException e) {
-                e.printStackTrace();
+                if(object != null){
+                    try {
+                        System.out.println(object.toString(4));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    dataOutputStream.write(object.toString().getBytes());
+                }
+
+                dataOutputStream.flush();
+                dataOutputStream.close();
             }
-
-            dataOutputStream.write(object.toString().getBytes());
-            dataOutputStream.flush();
-            dataOutputStream.close();
 
             int responseCode = conn.getResponseCode();
             System.out.println("ResponseCode: " + responseCode);

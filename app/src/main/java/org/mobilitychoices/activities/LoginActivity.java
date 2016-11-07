@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,9 +31,12 @@ import org.mobilitychoices.R;
 import org.mobilitychoices.entities.Token;
 import org.mobilitychoices.entities.User;
 import org.mobilitychoices.remote.LoginTask;
+import org.mobilitychoices.remote.MeTask;
+import org.mobilitychoices.remote.Response;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A login screen that offers login via email/password.
@@ -53,6 +57,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
 
         sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        String token = sharedPref.getString("token", null);
+
+        new MeTask(new MeTask.IMeCallback() {
+            @Override
+            public void done(Response<Object> response) {
+                Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf(response.getCode()), Toast.LENGTH_SHORT).show();
+                if (response.getCode() == 200) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    LoginActivity.this.startActivity(intent);
+                    LoginActivity.this.finish();
+                } else if (response.getCode() == 401) {
+                    //remove token from preferences
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.clear();
+                }
+            }
+        }, token).execute();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
