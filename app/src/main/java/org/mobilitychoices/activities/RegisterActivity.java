@@ -12,7 +12,6 @@ import android.widget.EditText;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mobilitychoices.R;
-import org.mobilitychoices.entities.User;
 import org.mobilitychoices.remote.RegisterTask;
 import org.mobilitychoices.remote.ResponseError;
 
@@ -40,8 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //TODO validate email
-                User user = new User();
-                user.setEmail(email_EditText.getText().toString());
+                String email = email_EditText.getText().toString();
 
                 //Validate password
                 String pw1 = password_EditText.getText().toString();
@@ -51,10 +49,8 @@ public class RegisterActivity extends AppCompatActivity {
                     password_confirm_EditText.setError("Password does not match! Try again.");
                     return;
                 }
-                user.setPasswort(pw1);
 
                 String username = username_EditText.getText().toString();
-                user.setUsername(username);
 
                 JSONObject jsonObject = new JSONObject();
                 try {
@@ -69,7 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                     if (response.getCode() == 201) {
                         Intent resultData = new Intent();
-                        resultData.putExtra("user", user);
+                        resultData.putExtra("email", email);
                         setResult(Activity.RESULT_OK, resultData);
                         finish();
                     } else {

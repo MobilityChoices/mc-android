@@ -29,14 +29,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mobilitychoices.R;
 import org.mobilitychoices.entities.Token;
-import org.mobilitychoices.entities.User;
 import org.mobilitychoices.remote.LoginTask;
 import org.mobilitychoices.remote.MeTask;
 import org.mobilitychoices.remote.Response;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * A login screen that offers login via email/password.
@@ -277,12 +275,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (requestCode == REGISTER_REQUEST_CODE) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                User user = (User) data.getExtras().getSerializable("user");
-                if (user != null) {
-                    mEmailView.setText(user.getEmail());
-                    mPasswordView.requestFocus();
-                    System.out.println("OnActivityResult: " + user.getEmail() + " : " + user.getPasswort());
-                }
+                String email = data.getExtras().getString("email");
+                mEmailView.setText(email);
+                mPasswordView.requestFocus();
+                System.out.println("OnActivityResult: " + email);
             }
         }
     }
