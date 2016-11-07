@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -88,57 +89,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             System.out.println("Google Play Services are deactivated");
         }
 
+        final MainActivity self = this;
+
         startStopBtn.setEnabled(true);
-        startStopBtn.setOnClickListener(view -> {
-
-            if (!isTracking) {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    System.out.println("Permission check failed - oh noo");
-                    return;
-                }
-                isTracking = !isTracking;
-                startStopBtn.setText(R.string.stop);
-
-                if(hasGooglePlay){
-                    LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-                    System.out.println("Google Play Services are used");
-                }else{
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-                    System.out.println("Android GPS Services are used");
-                }
-
-                locations = new ArrayList<>();
-                currentTrack = dbFacade.saveTrack(System.currentTimeMillis());
-            } else {
-                isTracking = false;
-                JSONArray jsonTracks = new JSONArray();
-                startStopBtn.setText(R.string.start);
-                if(hasGooglePlay){
-                    LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-                    System.out.println("Google Play Services are used to remove updates");
-                }else{
-                    locationManager.removeUpdates(this);
-                    System.out.println("Android GPS Services are used to remove updates");
-                }
-
-                String[] listItems = new String[locations.size()];
-                for (int i = 0; i < locations.size(); i++) {
-                    Location location = locations.get(i);
-                    listItems[i] = "Lat: " + location.getLatitude() + "; Lng: " + location.getLongitude();
-                    jsonTracks.put(location.toJSON());
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
-                trackList.setAdapter(adapter);
-
-                try {
-                    System.out.println(jsonTracks.toString(4));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                new UploadTrackTask().execute(jsonTracks);
+        startStopBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                self.doIT(locationManager);
             }
-        });
+    });
         if(hasGooglePlay){
             googleApiClient.connect();
         }
@@ -149,6 +108,56 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             System.out.println("Permission check failed");
             final int PERMISSION_ALL = 0;
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        }
+    }
+
+    private void doIT(LocationManager locationManager){
+        if (!isTracking) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                System.out.println("Permission check failed - oh noo");
+                return;
+            }
+            isTracking = !isTracking;
+            startStopBtn.setText(R.string.stop);
+
+            if(hasGooglePlay){
+                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+                System.out.println("Google Play Services are used");
+            }else{
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+                System.out.println("Android GPS Services are used");
+            }
+
+            locations = new ArrayList<>();
+            currentTrack = dbFacade.saveTrack(System.currentTimeMillis());
+        } else {
+            isTracking = false;
+            JSONArray jsonTracks = new JSONArray();
+            startStopBtn.setText(R.string.start);
+            if(hasGooglePlay){
+                LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+                System.out.println("Google Play Services are used to remove updates");
+            }else{
+                locationManager.removeUpdates(this);
+                System.out.println("Android GPS Services are used to remove updates");
+            }
+
+            String[] listItems = new String[locations.size()];
+            for (int i = 0; i < locations.size(); i++) {
+                Location location = locations.get(i);
+                listItems[i] = "Lat: " + location.getLatitude() + "; Lng: " + location.getLongitude();
+                jsonTracks.put(location.toJSON());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
+            trackList.setAdapter(adapter);
+
+            try {
+                System.out.println(jsonTracks.toString(4));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            new UploadTrackTask().execute(jsonTracks);
         }
     }
 

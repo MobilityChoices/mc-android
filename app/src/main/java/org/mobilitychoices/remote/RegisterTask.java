@@ -3,10 +3,9 @@ package org.mobilitychoices.remote;
 import android.os.AsyncTask;
 
 import org.json.JSONObject;
+import org.mobilitychoices.entities.Entity;
 
-import java.util.Arrays;
-
-public class RegisterTask extends AsyncTask<JSONObject, Void, Boolean> {
+public class RegisterTask extends AsyncTask<JSONObject,Void,Response<Object>> {
 
     private IRegisterCallback registerCallback;
 
@@ -15,21 +14,20 @@ public class RegisterTask extends AsyncTask<JSONObject, Void, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(JSONObject... jsonObject) {
-        //TODO
+    protected Response<Object> doInBackground(JSONObject... jsonObject) {
         JSONObject object = jsonObject[0];
-        System.out.println(Arrays.toString(object.toString().getBytes()));
-        return true;
+        String urlString = "http://172.22.13.195:3000/auth/register";
+        return new Connection().request(urlString, object, Entity.class);
     }
 
     @Override
-    protected void onPostExecute(Boolean result) {
+    protected void onPostExecute(Response<Object> result) {
         registerCallback.done(result);
     }
 
     @FunctionalInterface
     public interface IRegisterCallback{
-        void done(boolean success);
+        void done(Response<Object> success);
     }
 }
 

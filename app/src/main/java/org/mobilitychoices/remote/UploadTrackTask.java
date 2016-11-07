@@ -17,8 +17,8 @@ public class UploadTrackTask extends AsyncTask<JSONArray, Void, Void> {
     protected Void doInBackground(JSONArray... jsonArrays) {
         JSONObject object = new JSONObject();
         JSONArray tracks = jsonArrays[0];
-//        String urlString = "http://172.22.13.195:3000/tracks";
-        String urlString = "http://192.168.0.103:3000/tracks";
+        String urlString = "http://172.22.13.195:3000/tracks";
+//        String urlString = "http://192.168.0.103:3000/tracks";
 
         try {
             object.put("data", tracks);

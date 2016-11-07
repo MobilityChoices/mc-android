@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -28,57 +29,53 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         initViewElements();
-
-        Bundle bundle = getIntent().getExtras();
-        String email = bundle.getString("email");
-        String password = bundle.getString("password");
-
-        email_EditText.setText(email);
-        email_EditText.setEnabled(false);
-        password_EditText.setText(password);
-        password_confirm_EditText.requestFocus();
-
+        email_EditText.requestFocus();
 
         handleRegisterButton();
     }
 
     private void handleRegisterButton() {
-        register_Btn.setOnClickListener(view -> {
-            User user = new User();
-            user.setEmail(email_EditText.getText().toString());
+        register_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO validate email
+                User user = new User();
+                user.setEmail(email_EditText.getText().toString());
 
-            //Validate password
-            String pw1 = password_EditText.getText().toString();
-            String pw2 = password_confirm_EditText.getText().toString();
-            if (!pw1.equals(pw2)) {
-                password_confirm_EditText.requestFocus();
-                password_confirm_EditText.setError("Password does not match! Try again.");
-                return;
-            }
-            user.setPasswort(pw1);
-
-            String username = username_EditText.getText().toString();
-            user.setUsername(username);
-
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("email", email_EditText.getText().toString());
-                jsonObject.put("password", pw1);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            new RegisterTask(success -> {
-                Log.i(this.getLocalClassName(), String.valueOf(success));
-                if (success) {
-                    Intent resultData = new Intent();
-                    resultData.putExtra("user", user);
-                    setResult(Activity.RESULT_OK, resultData);
-                    finish();
-                } else {
-                    //TODO set correct error
+                //Validate password
+                String pw1 = password_EditText.getText().toString();
+                String pw2 = password_confirm_EditText.getText().toString();
+                if (!pw1.equals(pw2)) {
+                    password_confirm_EditText.requestFocus();
+                    password_confirm_EditText.setError("Password does not match! Try again.");
+                    return;
                 }
-            }).execute(jsonObject);
+                user.setPasswort(pw1);
+
+                String username = username_EditText.getText().toString();
+                user.setUsername(username);
+
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("email", email_EditText.getText().toString());
+                    jsonObject.put("password", pw1);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                new RegisterTask(response -> {
+                    Log.i(RegisterActivity.class.getName(), String.valueOf(response.getCode()));
+
+                    if (response.getCode() == 201) {
+                        Intent resultData = new Intent();
+                        resultData.putExtra("user", user);
+                        setResult(Activity.RESULT_OK, resultData);
+                        finish();
+                    } else {
+                        //TODO set correct error
+                    }
+                }).execute(jsonObject);
+            }
         });
     }
 
