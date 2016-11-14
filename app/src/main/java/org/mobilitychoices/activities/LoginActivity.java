@@ -51,34 +51,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-        String token = sharedPref.getString("token", null);
-
-        new MeTask(new MeTask.IMeCallback() {
-            @Override
-            public void done(Response<Object> response) {
-                Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf(response.getCode()), Toast.LENGTH_SHORT).show();
-                if (response.getCode() == 200) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    LoginActivity.this.startActivity(intent);
-                    LoginActivity.this.finish();
-                } else if (response.getCode() == 401) {
-                    //remove token from preferences
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.clear();
-                    editor.apply();
-                }
-            }
-        }, token).execute();
+        checkIfUserIsAlreadyLoggedIn();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        initViewComponents();
+    }
+
+    private void initViewComponents() {
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
@@ -103,6 +86,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
     }
 
+    private void checkIfUserIsAlreadyLoggedIn() {
+        sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        String token = sharedPref.getString("token", null);
+
+        new MeTask(new MeTask.IMeCallback() {
+            @Override
+            public void done(Response<Object> response) {
+                Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf(response.getCode()), Toast.LENGTH_SHORT).show();
+                if (response.getCode() == 200) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    LoginActivity.this.startActivity(intent);
+                    LoginActivity.this.finish();
+                } else if (response.getCode() == 401) {
+                    //remove token from preferences
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.clear();
+                    editor.apply();
+                }
+            }
+        }, token).execute();
+    }
+
     private void register() {
         //register the new account here.
         Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
@@ -125,83 +130,80 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
+        if (isInputCorrect(email, password)) {
+            showProgress(true);
+            startBackgroundLoginTask(email, password);
+        }
+    }
 
+    private boolean isInputCorrect(String email, String password) {
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
+            mPasswordView.requestFocus();
+            return false;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
+            mEmailView.requestFocus();
+            return false;
         }
+        return true;
+    }
 
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
+    private void startBackgroundLoginTask(String email, String password) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("email", email);
+            jsonObject.put("password", password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        new LoginTask(new LoginTask.ILoginCallback() {
+            @Override
+            public void done(Response<Object> response) {
+                Log.i(LoginActivity.class.getName(), String.valueOf(response.getCode()));
+                LoginActivity.this.showProgress(false);
 
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("email", email);
-                jsonObject.put("password", password);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            new LoginTask(new LoginTask.ILoginCallback() {
-                @Override
-                public void done(Response<Object> response) {
-                    Log.i(LoginActivity.class.getName(), String.valueOf(response.getCode()));
-                    LoginActivity.this.showProgress(false);
+                if (response.getCode() == 200) {
+                    Token data = (Token) response.getData();
+                    String token = data.getToken();
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("token", token);
+                    editor.apply();
 
-                    if (response.getCode() == 200) {
-                        Token data = (Token) response.getData();
-                        String token = data.getToken();
-                        SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString("token", token);
-                        editor.apply();
-
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        LoginActivity.this.startActivity(intent);
-                        LoginActivity.this.finish();
-                    } else {
-                        Log.i("Login", "Login failed " + response.getCode());
-                        if(response.getCode() == 400){
-                            ResponseError error = response.getError();
-                            Log.i("Login", "Error: " + error.getTarget());
-                            switch (error.getTarget()) {
-                                case "password":
-                                    mPasswordView.setError(LoginActivity.this.getString(R.string.error_incorrect_password));
-                                    mPasswordView.requestFocus();
-                                    break;
-                                case "email":
-                                    Log.i("Login", "Email failed");
-                                    mEmailView.setError("Email invalid or already in use!");
-                                    mEmailView.requestFocus();
-                                    break;
-                                default:
-                                    mPasswordView.setText("");
-                                    mEmailView.requestFocus();
-                                    mEmailView.setError("Email or Password incorrect");
-                                    break;
-                            }
-                        }else{
-                            Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf(getString(R.string.internalServerError)), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    LoginActivity.this.startActivity(intent);
+                    LoginActivity.this.finish();
+                } else {
+                    Log.i("Login", "Login failed " + response.getCode());
+                    if(response.getCode() == 400){
+                        ResponseError error = response.getError();
+                        Log.i("Login", "Error: " + error.getTarget());
+                        switch (error.getTarget()) {
+                            case "password":
+                                mPasswordView.setError(LoginActivity.this.getString(R.string.error_incorrect_password));
+                                mPasswordView.requestFocus();
+                                break;
+                            case "email":
+                                Log.i("Login", "Email failed");
+                                mEmailView.setError("Email invalid or already in use!");
+                                mEmailView.requestFocus();
+                                break;
+                            default:
+                                mPasswordView.setText("");
+                                mEmailView.requestFocus();
+                                mEmailView.setError("Email or Password incorrect");
+                                break;
                         }
+                    }else{
+                        Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf(getString(R.string.internalServerError)), Toast.LENGTH_LONG).show();
                     }
                 }
-            }).execute(jsonObject);
-        }
+            }
+        }).execute(jsonObject);
     }
 
     private boolean isPasswordValid(String password) {
@@ -305,7 +307,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 String email = data.getExtras().getString("email");
                 mEmailView.setText(email);
                 mPasswordView.requestFocus();
-                System.out.println("OnActivityResult: " + email);
             }
         }
     }
@@ -314,7 +315,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public void onBackPressed()
     {
         Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf("You can't press BACK at this point of the application! PLEASE LOGIN"), Toast.LENGTH_LONG).show();
-
     }
 
 
