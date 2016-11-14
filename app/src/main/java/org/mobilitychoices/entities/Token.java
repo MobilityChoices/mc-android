@@ -30,4 +30,8 @@ public class Token extends Entity {
     public String getToken() {
         return token;
     }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }
