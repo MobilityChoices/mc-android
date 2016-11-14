@@ -24,7 +24,7 @@ public class Connection<T extends Entity> {
         Response<T> response = null;
 
         try {
-            URL url = new URL("http://172.22.13.195:3000" + urlString);
+            URL url = new URL("http://193.170.2.185/mobility" + urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(requestMethod);
             conn.setRequestProperty("User-Agent", "MC-Android");
@@ -68,9 +68,16 @@ public class Connection<T extends Entity> {
             }
             bufferedReader.close();
             String result = sb.toString();
-            JSONObject jsonResult = new JSONObject(result);
+            JSONObject jsonResult = null;
+            try{
+                jsonResult = new JSONObject(result);
+            }catch (JSONException ex){
+                ex.printStackTrace();
+            }
 
-            System.out.println(jsonResult.toString(4));
+            if(jsonResult != null){
+                System.out.println(jsonResult.toString(4));
+            }
 
             T data = null;
             ResponseError error = null;

@@ -8,11 +8,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mobilitychoices.R;
 import org.mobilitychoices.remote.RegisterTask;
+import org.mobilitychoices.remote.Response;
 import org.mobilitychoices.remote.ResponseError;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -20,7 +22,6 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText email_EditText;
     private EditText password_EditText;
     private EditText password_confirm_EditText;
-    private EditText username_EditText;
     private Button register_Btn;
 
     @Override
@@ -38,7 +39,6 @@ public class RegisterActivity extends AppCompatActivity {
         register_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO validate email
                 String email = email_EditText.getText().toString();
 
                 //Validate password
@@ -50,8 +50,6 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                String username = username_EditText.getText().toString();
-
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("email", email_EditText.getText().toString());
@@ -60,20 +58,33 @@ public class RegisterActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                new RegisterTask(response -> {
-                    Log.i(RegisterActivity.class.getName(), String.valueOf(response.getCode()));
+                new RegisterTask(new RegisterTask.IRegisterCallback() {
+                    @Override
+                    public void done(Response<Object> response) {
+                        if(response != null){
+                            Log.i(RegisterActivity.class.getName(), String.valueOf(response.getCode()));
 
-                    if (response.getCode() == 201) {
-                        Intent resultData = new Intent();
-                        resultData.putExtra("email", email);
-                        setResult(Activity.RESULT_OK, resultData);
-                        finish();
-                    } else {
-                        if(response.getCode() == 400){
-                            ResponseError error = response.getError();
-                            //TODO handle error
-                        }else if(response.getCode() == 500){
-                            //Server Error
+                            if (response.getCode() == 201) {
+                                Intent resultData = new Intent();
+                                resultData.putExtra("email", email);
+                                setResult(Activity.RESULT_OK, resultData);
+                                finish();
+                            } else {
+                                if (response.getCode() == 400) {
+                                    ResponseError error = response.getError();
+                                    if(error.getTarget().equals("password")){
+                                        password_confirm_EditText.setText("");
+                                        password_EditText.setText("");
+                                        password_EditText.setError("Invalid Password! Min. length: 3");
+                                        password_EditText.requestFocus();
+                                    }else if(error.getTarget().equals("email")){
+                                        email_EditText.setError("Email invalid or already in use!");
+                                        email_EditText.requestFocus();
+                                    }
+                                } else if (response.getCode() == 500) {
+                                    Toast.makeText(RegisterActivity.this.getApplicationContext(), String.valueOf(getString(R.string.internalServerError)), Toast.LENGTH_LONG).show();
+                                }
+                            }
                         }
                     }
                 }).execute(jsonObject);
@@ -85,7 +96,7 @@ public class RegisterActivity extends AppCompatActivity {
         email_EditText = (EditText) findViewById(R.id.email_register_form);
         password_EditText = (EditText) findViewById(R.id.password_register_form);
         password_confirm_EditText = (EditText) findViewById(R.id.password_confirm_register_form);
-        username_EditText = (EditText) findViewById(R.id.username_register_form);
+//        EditText username_EditText = (EditText) findViewById(R.id.username_register_form);
         register_Btn = (Button) findViewById(R.id.registerBtn);
     }
 }

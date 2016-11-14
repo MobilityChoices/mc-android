@@ -3,7 +3,9 @@ package org.mobilitychoices.entities;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Location {
+import java.io.Serializable;
+
+public class Location implements Serializable {
     private double latitude;
     private double longitude;
     private double altitude;
@@ -16,6 +18,14 @@ public class Location {
         this.altitude = location.getAltitude();
         this.speed = location.getSpeed();
         this.time = location.getTime();
+    }
+
+    public Location(double latitude, double longitude, double altitude, double speed, long time){
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.altitude = altitude;
+        this.speed = speed;
+        this.time = time;
     }
 
     public double getLatitude() {

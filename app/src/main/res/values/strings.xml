@@ -16,7 +16,7 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_incorrect_password">This password is invalid</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
@@ -27,4 +27,10 @@
     <string name="password_confirm_register">Confirm Password</string>
     <string name="username_register">Username</string>
     <string name="action_register">No account yet? Create one</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="action_logout">Logout</string>
+    <string name="internalServerError">Internal Server Error! Try again later</string>
+
+    <string name="google_maps_key">AIzaSyBD8loX-V1AmNeom6BwnfVvkw03iZSUe8M</string>
+    <string name="ErrorNoLocationsInList">You have no positions tracked yet! Try again</string>
 </resources>

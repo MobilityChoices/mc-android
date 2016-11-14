@@ -32,6 +32,7 @@ import org.mobilitychoices.entities.Token;
 import org.mobilitychoices.remote.LoginTask;
 import org.mobilitychoices.remote.MeTask;
 import org.mobilitychoices.remote.Response;
+import org.mobilitychoices.remote.ResponseError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +70,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     //remove token from preferences
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.clear();
+                    editor.apply();
                 }
             }
         }, token).execute();
@@ -154,24 +156,47 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            new LoginTask(response -> {
-                Log.i(LoginActivity.class.getName(), String.valueOf(response.getCode()));
-                showProgress(false);
+            new LoginTask(new LoginTask.ILoginCallback() {
+                @Override
+                public void done(Response<Object> response) {
+                    Log.i(LoginActivity.class.getName(), String.valueOf(response.getCode()));
+                    LoginActivity.this.showProgress(false);
 
-                Token data = (Token) response.getData();
-                String token = data.getToken();
+                    if (response.getCode() == 200) {
+                        Token data = (Token) response.getData();
+                        String token = data.getToken();
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString("token", token);
+                        editor.apply();
 
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("token", token);
-                editor.commit();
-
-                if (response.getCode() == 200) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    mPasswordView.setError(getString(R.string.error_incorrect_password));
-                    mPasswordView.requestFocus();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        LoginActivity.this.startActivity(intent);
+                        LoginActivity.this.finish();
+                    } else {
+                        Log.i("Login", "Login failed " + response.getCode());
+                        if(response.getCode() == 400){
+                            ResponseError error = response.getError();
+                            Log.i("Login", "Error: " + error.getTarget());
+                            switch (error.getTarget()) {
+                                case "password":
+                                    mPasswordView.setError(LoginActivity.this.getString(R.string.error_incorrect_password));
+                                    mPasswordView.requestFocus();
+                                    break;
+                                case "email":
+                                    Log.i("Login", "Email failed");
+                                    mEmailView.setError("Email invalid or already in use!");
+                                    mEmailView.requestFocus();
+                                    break;
+                                default:
+                                    mPasswordView.setText("");
+                                    mEmailView.requestFocus();
+                                    mEmailView.setError("Email or Password incorrect");
+                                    break;
+                            }
+                        }else{
+                            Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf(getString(R.string.internalServerError)), Toast.LENGTH_LONG).show();
+                        }
+                    }
                 }
             }).execute(jsonObject);
         }
@@ -282,6 +307,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         }
     }
+
+    @Override
+    public void onBackPressed()
+    {
+        Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf("You can't press BACK at this point of the application! PLEASE LOGIN"), Toast.LENGTH_LONG).show();
+
+    }
+
 
 }
 

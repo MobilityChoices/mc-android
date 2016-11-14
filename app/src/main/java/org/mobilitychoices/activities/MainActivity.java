@@ -2,6 +2,7 @@ package org.mobilitychoices.activities;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -39,23 +40,24 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener, android.location.LocationListener {
 
-    GoogleApiClient googleApiClient;
-    LocationRequest locationRequest;
+    private GoogleApiClient googleApiClient;
+    private LocationRequest locationRequest;
 
-    TextView latitude;
-    TextView longitude;
-    TextView time;
-    Button startStopBtn;
-    ListView trackList;
+    private TextView latitude;
+    private TextView longitude;
+    private TextView time;
+    private Button startStopBtn;
+    private ListView trackList;
+    private Button showMapBtn;
 
-    boolean isTracking;
-    ArrayList<Location> locations;
-    DbFacade dbFacade;
-    boolean hasGooglePlay;
+    private boolean isTracking;
+    private ArrayList<Location> locations;
+    private DbFacade dbFacade;
+    private boolean hasGooglePlay;
 
-    long currentTrack;
+    private long currentTrack;
 
-    final String[] PERMISSIONS = {
+    private final String[] PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_NETWORK_STATE,
             Manifest.permission.INTERNET
@@ -73,8 +75,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         time = (TextView) findViewById(R.id.textView);
         startStopBtn = (Button) findViewById(R.id.startStopBtn);
         trackList = (ListView) findViewById(R.id.trackList);
+        showMapBtn = (Button) findViewById(R.id.showMapBtn);
 
-        dbFacade = new DbFacade(getApplicationContext());
+        showMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mapsIntent = new Intent(MainActivity.this, MapsActivity.class);
+                mapsIntent.putExtra("currentTrack", currentTrack);
+                startActivity(mapsIntent);
+            }
+        });
+
+        dbFacade = DbFacade.getInstance(this);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         requestLocationPermissions();
@@ -99,8 +111,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onClick(View view) {
                 self.doIT(locationManager);
             }
-    });
-        if(hasGooglePlay){
+        });
+        if (hasGooglePlay) {
             googleApiClient.connect();
         }
     }
@@ -113,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    private void doIT(LocationManager locationManager){
+    private void doIT(LocationManager locationManager) {
         if (!isTracking) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 System.out.println("Permission check failed - oh noo");
@@ -122,10 +134,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             isTracking = !isTracking;
             startStopBtn.setText(R.string.stop);
 
-            if(hasGooglePlay){
+            if (hasGooglePlay) {
                 LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
                 System.out.println("Google Play Services are used");
-            }else{
+            } else {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
                 System.out.println("Android GPS Services are used");
@@ -137,10 +149,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             isTracking = false;
             JSONArray jsonTracks = new JSONArray();
             startStopBtn.setText(R.string.start);
-            if(hasGooglePlay){
+            if (hasGooglePlay) {
                 LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
                 System.out.println("Google Play Services are used to remove updates");
-            }else{
+            } else {
                 locationManager.removeUpdates(this);
                 System.out.println("Android GPS Services are used to remove updates");
             }
@@ -153,6 +165,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
             trackList.setAdapter(adapter);
+            if(hasGooglePlay){
+                showMapBtn.setVisibility(View.VISIBLE);
+            }
 
             try {
                 System.out.println(jsonTracks.toString(4));
@@ -201,8 +216,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        if(R.id.action_logout == id){
+            SharedPreferences sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.remove("token");
+            editor.apply();
+            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+        }else if(id == R.id.action_settings){
+            return true;
+        }
 
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
 
     }
 
@@ -254,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         long id = dbFacade.saveLocation(location, currentTrack);
 
-        System.out.println("New location db-id: " +id);
+        System.out.println("New location db-id: " + id);
 
     }
 }
