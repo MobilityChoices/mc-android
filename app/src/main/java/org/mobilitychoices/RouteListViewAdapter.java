@@ -30,7 +30,7 @@ public class RouteListViewAdapter extends ArrayAdapter<Route> {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-// Get the data item for this position
+        // Get the data item for this position
         Route route = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
@@ -50,7 +50,11 @@ public class RouteListViewAdapter extends ArrayAdapter<Route> {
         // Populate the data from the data object via the viewHolder object
         // into the template view.
         viewHolder.time.setText(route.getTime());
-        viewHolder.modes.setText(route.getModes().toString());
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String s : route.getModes()) {
+            stringBuilder.append(s);
+        }
+        viewHolder.modes.setText(stringBuilder.toString());
         // Return the completed view to render on screen
         return convertView;
 

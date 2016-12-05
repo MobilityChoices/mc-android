@@ -11,11 +11,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mobilitychoices.R;
 import org.mobilitychoices.RouteListViewAdapter;
 import org.mobilitychoices.entities.Route;
+import org.mobilitychoices.entities.Routes;
 import org.mobilitychoices.remote.DirectionsTask;
 import org.mobilitychoices.remote.Response;
 
@@ -38,14 +40,16 @@ public class DirectionsActivity extends AppCompatActivity {
         textView = (TextView) findViewById(R.id.success);
         listView = (ListView) findViewById(R.id.routesListView);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(), "An item of the ListView is clicked.", Toast.LENGTH_LONG).show();
+                Route route = adapter.getItem(position);
+                System.out.println(route.getModes() + " --> " + route.getTime());
             }
         });
 
-        ArrayList<Route> arrayOfRoutes= new ArrayList<Route>();
-        adapter = new RouteListViewAdapter(this,R.layout.list_item,R.id.modes,arrayOfRoutes);
+        ArrayList<Route> arrayOfRoutes = new ArrayList<Route>();
+        adapter = new RouteListViewAdapter(this, R.layout.list_item, R.id.modes, arrayOfRoutes);
         listView.setAdapter(adapter);
 
         requestRoutes();
@@ -66,9 +70,9 @@ public class DirectionsActivity extends AppCompatActivity {
         new DirectionsTask(new DirectionsTask.IDirectionsCallback() {
             @Override
             public void done(Response<Object> response) {
-                if(response != null){
+                if (response != null) {
                     if (response.getCode() == 200) {
-                        showAlternativeRoutes(response.getData());
+                        showAlternativeRoutes((Routes) response.getData());
                     } else {
                         if (response.getCode() == 400) {
                             //irgendwas fehlt origin oder dest
@@ -81,15 +85,17 @@ public class DirectionsActivity extends AppCompatActivity {
         }).execute(jsonObject);
     }
 
-    private void showAlternativeRoutes(Object data) {
+    private void showAlternativeRoutes(Routes data) {
         textView.setText("Success!");
-
-        //TODO extract routes
         ArrayList<Route> routes = new ArrayList<>();
-        routes.add(new Route("10", new String[]{"bicycling", "walking"}));
-        routes.add(new Route("11", new String[]{"transit", "walking"}));
-        routes.add(new Route("12", new String[]{"driving", "driving"}));
-        routes.add(new Route("13", new String[]{"walking", "walking"}));
+
+        ArrayList<JSONObject> Jroutes = data.getRoutes();
+
+        for (int i = 0; i < Jroutes.size(); i++) {
+            Route route = new Route(Jroutes.get(i));
+            route.fromJSON(Jroutes.get(i));
+            routes.add(route);
+        }
 
         adapter.clear();
         adapter.addAll(routes);
