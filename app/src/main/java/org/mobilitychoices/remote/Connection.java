@@ -24,7 +24,7 @@ public class Connection<T extends Entity> {
         Response<T> response = null;
 
         try {
-            URL url = new URL("http://193.170.2.185/mobility" + urlString);
+            URL url = new URL("http://app.mobility-choices.org/mobility" + urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(requestMethod);
             conn.setRequestProperty("User-Agent", "MC-Android");

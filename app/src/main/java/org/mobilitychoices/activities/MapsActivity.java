@@ -68,8 +68,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             googleMap.addPolyline(po);
         }else{
             Toast.makeText(MapsActivity.this.getApplicationContext(), R.string.ErrorNoLocationsInList, Toast.LENGTH_LONG).show();
-
         }
-
     }
 }

@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.mobilitychoices.R;
 import org.mobilitychoices.database.DbFacade;
 import org.mobilitychoices.entities.Location;
+import org.mobilitychoices.remote.DirectionsTask;
 import org.mobilitychoices.remote.UploadTrackTask;
 
 import java.util.ArrayList;
@@ -178,6 +179,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
             String token = sharedPreferences.getString("token", null);
             new UploadTrackTask(token).execute(jsonTracks);
+
+            //request alternative routes
+            String origin = locations.get(0).getLatitude() + "," + locations.get(0).getLongitude();
+            String destination = locations.get(locations.size()-1).getLatitude() + "," + locations.get(locations.size()-1).getLongitude();
+
+            Intent directionsIntent = new Intent(MainActivity.this, DirectionsActivity.class);
+            directionsIntent.putExtra("origin", origin);
+            directionsIntent.putExtra("destination", destination);
+            startActivity(directionsIntent);
         }
     }
 

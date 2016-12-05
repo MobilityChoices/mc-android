@@ -81,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
                                         email_EditText.setError("Email invalid or already in use!");
                                         email_EditText.requestFocus();
                                     }
-                                } else if (response.getCode() == 500) {
+                                } else if (response.getCode() == 500 || response.getCode() == 404) {
                                     Toast.makeText(RegisterActivity.this.getApplicationContext(), String.valueOf(getString(R.string.internalServerError)), Toast.LENGTH_LONG).show();
                                 }
                             }
