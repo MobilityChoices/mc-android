@@ -1,6 +1,9 @@
 package org.mobilitychoices.activities;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -28,6 +32,7 @@ import org.json.JSONException;
 import org.mobilitychoices.R;
 import org.mobilitychoices.database.DbFacade;
 import org.mobilitychoices.entities.Location;
+import org.mobilitychoices.remote.DirectionsTask;
 import org.mobilitychoices.remote.UploadTrackTask;
 
 import java.util.ArrayList;
@@ -36,23 +41,24 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener, android.location.LocationListener {
 
-    GoogleApiClient googleApiClient;
-    LocationRequest locationRequest;
+    private GoogleApiClient googleApiClient;
+    private LocationRequest locationRequest;
 
-    TextView latitude;
-    TextView longitude;
-    TextView time;
-    Button startStopBtn;
-    ListView trackList;
+    private TextView latitude;
+    private TextView longitude;
+    private TextView time;
+    private Button startStopBtn;
+    private ListView trackList;
+    private Button showMapBtn;
 
-    boolean isTracking;
-    ArrayList<Location> locations;
-    DbFacade dbFacade;
-    boolean hasGooglePlay;
+    private boolean isTracking;
+    private ArrayList<Location> locations;
+    private DbFacade dbFacade;
+    private boolean hasGooglePlay;
 
-    long currentTrack;
+    private long currentTrack;
 
-    final String[] PERMISSIONS = {
+    private final String[] PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_NETWORK_STATE,
             Manifest.permission.INTERNET
@@ -70,8 +76,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         time = (TextView) findViewById(R.id.textView);
         startStopBtn = (Button) findViewById(R.id.startStopBtn);
         trackList = (ListView) findViewById(R.id.trackList);
+        showMapBtn = (Button) findViewById(R.id.showMapBtn);
 
-        dbFacade = new DbFacade(getApplicationContext());
+        showMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mapsIntent = new Intent(MainActivity.this, MapsActivity.class);
+                mapsIntent.putExtra("currentTrack", currentTrack);
+                startActivity(mapsIntent);
+            }
+        });
+
+        dbFacade = DbFacade.getInstance(this);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         requestLocationPermissions();
@@ -88,58 +104,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             System.out.println("Google Play Services are deactivated");
         }
 
+        final MainActivity self = this;
+
         startStopBtn.setEnabled(true);
-        startStopBtn.setOnClickListener(view -> {
-
-            if (!isTracking) {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    System.out.println("Permission check failed - oh noo");
-                    return;
-                }
-                isTracking = !isTracking;
-                startStopBtn.setText(R.string.stop);
-
-                if(hasGooglePlay){
-                    LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-                    System.out.println("Google Play Services are used");
-                }else{
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-                    System.out.println("Android GPS Services are used");
-                }
-
-                locations = new ArrayList<>();
-                currentTrack = dbFacade.saveTrack(System.currentTimeMillis());
-            } else {
-                isTracking = false;
-                JSONArray jsonTracks = new JSONArray();
-                startStopBtn.setText(R.string.start);
-                if(hasGooglePlay){
-                    LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-                    System.out.println("Google Play Services are used to remove updates");
-                }else{
-                    locationManager.removeUpdates(this);
-                    System.out.println("Android GPS Services are used to remove updates");
-                }
-
-                String[] listItems = new String[locations.size()];
-                for (int i = 0; i < locations.size(); i++) {
-                    Location location = locations.get(i);
-                    listItems[i] = "Lat: " + location.getLatitude() + "; Lng: " + location.getLongitude();
-                    jsonTracks.put(location.toJSON());
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
-                trackList.setAdapter(adapter);
-
-                try {
-                    System.out.println(jsonTracks.toString(4));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                new UploadTrackTask().execute(jsonTracks);
+        startStopBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                self.doIT(locationManager);
             }
         });
-        if(hasGooglePlay){
+        if (hasGooglePlay) {
             googleApiClient.connect();
         }
     }
@@ -149,6 +123,71 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             System.out.println("Permission check failed");
             final int PERMISSION_ALL = 0;
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        }
+    }
+
+    private void doIT(LocationManager locationManager) {
+        if (!isTracking) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                System.out.println("Permission check failed - oh noo");
+                return;
+            }
+            isTracking = !isTracking;
+            startStopBtn.setText(R.string.stop);
+
+            if (hasGooglePlay) {
+                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+                System.out.println("Google Play Services are used");
+            } else {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+                System.out.println("Android GPS Services are used");
+            }
+
+            locations = new ArrayList<>();
+            currentTrack = dbFacade.saveTrack(System.currentTimeMillis());
+        } else {
+            isTracking = false;
+            JSONArray jsonTracks = new JSONArray();
+            startStopBtn.setText(R.string.start);
+            if (hasGooglePlay) {
+                LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+                System.out.println("Google Play Services are used to remove updates");
+            } else {
+                locationManager.removeUpdates(this);
+                System.out.println("Android GPS Services are used to remove updates");
+            }
+
+            String[] listItems = new String[locations.size()];
+            for (int i = 0; i < locations.size(); i++) {
+                Location location = locations.get(i);
+                listItems[i] = "Lat: " + location.getLatitude() + "; Lng: " + location.getLongitude();
+                jsonTracks.put(location.toJSON());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
+            trackList.setAdapter(adapter);
+            if(hasGooglePlay){
+                showMapBtn.setVisibility(View.VISIBLE);
+            }
+
+            try {
+                System.out.println(jsonTracks.toString(4));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+            String token = sharedPreferences.getString("token", null);
+            new UploadTrackTask(token).execute(jsonTracks);
+
+            //request alternative routes
+            String origin = locations.get(0).getLatitude() + "," + locations.get(0).getLongitude();
+            String destination = locations.get(locations.size()-1).getLatitude() + "," + locations.get(locations.size()-1).getLongitude();
+
+            Intent directionsIntent = new Intent(MainActivity.this, DirectionsActivity.class);
+            directionsIntent.putExtra("origin", origin);
+            directionsIntent.putExtra("destination", destination);
+            startActivity(directionsIntent);
         }
     }
 
@@ -187,8 +226,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        if(R.id.action_logout == id){
+            SharedPreferences sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.remove("token");
+            editor.apply();
+            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+        }else if(id == R.id.action_settings){
+            return true;
+        }
 
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
 
     }
 
@@ -240,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         long id = dbFacade.saveLocation(location, currentTrack);
 
-        System.out.println("New location db-id: " +id);
+        System.out.println("New location db-id: " + id);
 
     }
 }
