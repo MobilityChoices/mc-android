@@ -5,7 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.mobilitychoices.entities.Route;
@@ -24,9 +25,10 @@ public class RouteListViewAdapter extends ArrayAdapter<Route> {
         this.resource = resource;
         this.routes = routes;
     }
+
     private static class ViewHolder {
         TextView time;
-        TextView modes;
+        TableRow row;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -40,22 +42,42 @@ public class RouteListViewAdapter extends ArrayAdapter<Route> {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.list_item, parent, false);
             viewHolder.time = (TextView) convertView.findViewById(R.id.time);
-            viewHolder.modes = (TextView) convertView.findViewById(R.id.modes);
+            viewHolder.row = (TableRow) convertView.findViewById(R.id.tableRow);
             // Cache the viewHolder object inside the fresh view
             convertView.setTag(viewHolder);
         } else {
             // View is being recycled, retrieve the viewHolder object from tag
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        // Populate the data from the data object via the viewHolder object
-        // into the template view.
+
         viewHolder.time.setText(route.getTime());
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String s : route.getModes()) {
-            stringBuilder.append(s);
+
+        for (int i = route.getModes().size() - 1; i >= 0; i--) {
+            String s = route.getModes().get(i);
+            ImageView imgView = new ImageView(getContext());
+            imgView.setScaleType(ImageView.ScaleType.FIT_START);
+
+            switch (s) {
+                case "driving": {
+                    imgView.setImageResource(R.drawable.ic_directions_car_black_36dp);
+                    break;
+                }
+                case "bicycling": {
+                    imgView.setImageResource(R.drawable.ic_directions_bike_black_36dp);
+                    break;
+                }
+                case "walking": {
+                    imgView.setImageResource(R.drawable.ic_directions_walk_black_36dp);
+                    break;
+                }
+                case "transit": {
+                    imgView.setImageResource(R.drawable.ic_directions_transit_black_36dp);
+                    break;
+                }
+            }
+            viewHolder.row.addView(imgView, 0);
         }
-        viewHolder.modes.setText(stringBuilder.toString());
-        // Return the completed view to render on screen
+
         return convertView;
 
     }

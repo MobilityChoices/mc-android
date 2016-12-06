@@ -49,7 +49,7 @@ public class DirectionsActivity extends AppCompatActivity {
         });
 
         ArrayList<Route> arrayOfRoutes = new ArrayList<Route>();
-        adapter = new RouteListViewAdapter(this, R.layout.list_item, R.id.modes, arrayOfRoutes);
+        adapter = new RouteListViewAdapter(this, R.layout.list_item, 0, arrayOfRoutes);
         listView.setAdapter(adapter);
 
         requestRoutes();
