@@ -5,9 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
-
-
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,6 +13,8 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:layout_marginTop="@dimen/cast_mini_controller_font_size_line1"
+            android:layout_marginBottom="@dimen/cast_mini_controller_font_size_line1"
             android:id="@+id/tableRow">
 
             <LinearLayout

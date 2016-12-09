@@ -13,46 +13,73 @@
     tools:context="org.mobilitychoices.activities.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:id="@+id/currentPositionContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Timestamp"
-        android:id="@+id/textView"/>
+        android:stretchColumns="1">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Longitude: "
-        android:id="@+id/textLongitude"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Latitude: "
-        android:id="@+id/textLatitude"
-        android:layout_below="@+id/textLongitude"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        <TableRow
+            android:id="@+id/CurrentPositionTitle"
+            android:layout_width="match_parent"
+            android:padding="@dimen/cast_mini_controller_font_size_line2"
+            android:background="@color/cast_intro_overlay_button_background_color"
+            android:layout_height="40dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/currentPosition"
+                android:text="Current Position:"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/CurrentPositionLatitude"
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+            <TextView
+                android:id="@+id/textLatitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="" />
+            <TextView
+                android:id="@+id/textLongitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="" />
+        </TableRow>
+    </TableLayout>
 
     <ListView
+        android:id="@+id/trackList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/trackList"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/startStopBtn" />
 
     <Button
-        android:text="Start"
+        android:id="@+id/startStopBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/currentPositionContainer"
+        android:layout_centerHorizontal="true"
         android:enabled="false"
-        android:id="@+id/startStopBtn"
-        android:layout_below="@+id/textLatitude"
-        android:layout_centerHorizontal="true" />
+        android:text="@string/startBtn" />
+
+    <Button
+        android:id="@+id/showAllRoutesBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/startStopBtn"
+        android:layout_centerHorizontal="true"
+        android:enabled="false"
+        android:text="@string/show_all_my_tracks" />
 
 </RelativeLayout>

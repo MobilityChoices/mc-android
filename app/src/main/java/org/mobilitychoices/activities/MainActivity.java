@@ -35,8 +35,12 @@ import org.mobilitychoices.entities.Location;
 import org.mobilitychoices.remote.DirectionsTask;
 import org.mobilitychoices.remote.UploadTrackTask;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
+
+import static android.provider.Settings.System.DATE_FORMAT;
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener, android.location.LocationListener {
@@ -72,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         latitude = (TextView) findViewById(R.id.textLatitude);
         longitude = (TextView) findViewById(R.id.textLongitude);
-        time = (TextView) findViewById(R.id.textView);
+        time = (TextView) findViewById(R.id.currentPosition);
         startStopBtn = (Button) findViewById(R.id.startStopBtn);
         trackList = (ListView) findViewById(R.id.trackList);
 
@@ -267,15 +271,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void handleNewLocation(Location location) {
         latitude.setText(String.format("%s%s", getString(R.string.latitude), String.valueOf(location.getLatitude())));
         longitude.setText(String.format("%s%s", getString(R.string.longitude), String.valueOf(location.getLongitude())));
+
         long currentTimeMillis = System.currentTimeMillis();
         Date date = new Date(currentTimeMillis);
-        time.setText(date.toString());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        time.setText("Current position: " + dateFormat.format(date));
 
         locations.add(location);
-
         long id = dbFacade.saveLocation(location, currentTrack);
-
         System.out.println("New location db-id: " + id);
-
     }
 }

@@ -5,8 +5,8 @@
     <string name="start">Start</string>
     <string name="latitudeError">Latitude: An error occurred!</string>
     <string name="longitudeError">Longitude: An error occurred!</string>
-    <string name="latitude">"Latitude: "</string>
-    <string name="longitude">"Longitude: "</string>
+    <string name="latitude">"Lat: "</string>
+    <string name="longitude">"Lng: "</string>
     <string name="title_activity_login">Login</string>
 
     <!-- Strings related to login -->
@@ -33,6 +33,8 @@
 
     <string name="google_maps_key">AIzaSyBD8loX-V1AmNeom6BwnfVvkw03iZSUe8M</string>
     <string name="ErrorNoLocationsInList">You have no positions tracked yet! Try again</string>
-    <string name="title_activity_directions">DirectionsActivity</string>
+    <string name="title_activity_directions">Alternative routes</string>
     <string name="show_alternative_routes">Show alternative routes!</string>
+    <string name="startBtn">Start</string>
+    <string name="show_all_my_tracks">Show all my tracks</string>
 </resources>

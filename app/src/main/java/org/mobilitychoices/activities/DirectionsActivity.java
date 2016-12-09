@@ -1,17 +1,13 @@
 package org.mobilitychoices.activities;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mobilitychoices.R;
@@ -25,7 +21,6 @@ import java.util.ArrayList;
 
 public class DirectionsActivity extends AppCompatActivity {
 
-    private TextView textView;
     private ListView listView;
     private RouteListViewAdapter adapter;
 
@@ -37,7 +32,6 @@ public class DirectionsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        textView = (TextView) findViewById(R.id.success);
         listView = (ListView) findViewById(R.id.routesListView);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -86,7 +80,6 @@ public class DirectionsActivity extends AppCompatActivity {
     }
 
     private void showAlternativeRoutes(Routes data) {
-        textView.setText("Success!");
         ArrayList<Route> routes = new ArrayList<>();
 
         ArrayList<JSONObject> Jroutes = data.getRoutes();
