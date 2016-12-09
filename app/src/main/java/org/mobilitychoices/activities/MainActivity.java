@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private TextView time;
     private Button startStopBtn;
     private ListView trackList;
-    private Button showMapBtn;
+//    private Button showMapBtn;
 
     private boolean isTracking;
     private ArrayList<Location> locations;
@@ -76,16 +76,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         time = (TextView) findViewById(R.id.textView);
         startStopBtn = (Button) findViewById(R.id.startStopBtn);
         trackList = (ListView) findViewById(R.id.trackList);
-        showMapBtn = (Button) findViewById(R.id.showMapBtn);
-
-        showMapBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent mapsIntent = new Intent(MainActivity.this, MapsActivity.class);
-                mapsIntent.putExtra("currentTrack", currentTrack);
-                startActivity(mapsIntent);
-            }
-        });
+//        showMapBtn = (Button) findViewById(R.id.showMapBtn);
+//
+//        showMapBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent mapsIntent = new Intent(MainActivity.this, MapsActivity.class);
+//                mapsIntent.putExtra("currentTrack", currentTrack);
+//                startActivity(mapsIntent);
+//            }
+//        });
 
         dbFacade = DbFacade.getInstance(this);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
             trackList.setAdapter(adapter);
             if(hasGooglePlay){
-                showMapBtn.setVisibility(View.VISIBLE);
+//                showMapBtn.setVisibility(View.VISIBLE);
             }
 
             try {
@@ -180,14 +180,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             String token = sharedPreferences.getString("token", null);
             new UploadTrackTask(token).execute(jsonTracks);
 
-            //request alternative routes
-            String origin = locations.get(0).getLatitude() + "," + locations.get(0).getLongitude();
-            String destination = locations.get(locations.size()-1).getLatitude() + "," + locations.get(locations.size()-1).getLongitude();
+            if(hasGooglePlay){
+                Intent mapsIntent = new Intent(MainActivity.this, MapsActivity.class);
+                mapsIntent.putExtra("currentTrack", currentTrack);
+                startActivity(mapsIntent);
+            }else{
+                //TODO
+            }
 
-            Intent directionsIntent = new Intent(MainActivity.this, DirectionsActivity.class);
-            directionsIntent.putExtra("origin", origin);
-            directionsIntent.putExtra("destination", destination);
-            startActivity(directionsIntent);
+
+            //request alternative routes
+//            String origin = locations.get(0).getLatitude() + "," + locations.get(0).getLongitude();
+//            String destination = locations.get(locations.size()-1).getLatitude() + "," + locations.get(locations.size()-1).getLongitude();
+//
+//            Intent directionsIntent = new Intent(MainActivity.this, DirectionsActivity.class);
+//            directionsIntent.putExtra("origin", origin);
+//            directionsIntent.putExtra("destination", destination);
+//            startActivity(directionsIntent);
         }
     }
 

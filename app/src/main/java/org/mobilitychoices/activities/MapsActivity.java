@@ -1,13 +1,17 @@
 package org.mobilitychoices.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -22,6 +26,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private ArrayList<Location> locations;
     private DbFacade dbFacade;
+    private Button showAlternativesBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +36,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
         dbFacade = DbFacade.getInstance(this);
         long currentTrack =  (long) getIntent().getExtras().get("currentTrack");
         locations = dbFacade.getTrack(currentTrack);
+        showAlternativesBtn = (Button) findViewById(R.id.showAlternativesBtn);
+        showAlternativesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String origin = locations.get(0).getLatitude() + "," + locations.get(0).getLongitude();
+                String destination = locations.get(locations.size() - 1).getLatitude() + "," + locations.get(locations.size() - 1).getLongitude();
+
+                Intent directionsIntent = new Intent(MapsActivity.this, DirectionsActivity.class);
+                directionsIntent.putExtra("origin", origin);
+                directionsIntent.putExtra("destination", destination);
+                startActivity(directionsIntent);
+            }
+        });
     }
 
 
@@ -48,6 +67,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
 
         ArrayList<LatLng> latLngs = new ArrayList<>();
         for (Location location :
@@ -56,8 +76,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         if(locations != null && locations.size() >= 1){
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(locations.get(0).getLatitude(), locations.get(0).getLongitude()), 2));
+            LatLng latLng = new LatLng(locations.get(0).getLatitude(), locations.get(0).getLongitude());
+
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(10).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
             PolylineOptions po = new PolylineOptions().geodesic(true);
             for (LatLng l:
@@ -69,5 +91,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }else{
             Toast.makeText(MapsActivity.this.getApplicationContext(), R.string.ErrorNoLocationsInList, Toast.LENGTH_LONG).show();
         }
+
     }
 }

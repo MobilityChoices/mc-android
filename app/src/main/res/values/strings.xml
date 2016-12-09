@@ -34,4 +34,5 @@
     <string name="google_maps_key">AIzaSyBD8loX-V1AmNeom6BwnfVvkw03iZSUe8M</string>
     <string name="ErrorNoLocationsInList">You have no positions tracked yet! Try again</string>
     <string name="title_activity_directions">DirectionsActivity</string>
+    <string name="show_alternative_routes">Show alternative routes!</string>
 </resources>

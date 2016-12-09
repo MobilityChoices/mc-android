@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -28,7 +29,7 @@ public class RouteListViewAdapter extends ArrayAdapter<Route> {
 
     private static class ViewHolder {
         TextView time;
-        TableRow row;
+        LinearLayout icons;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -42,7 +43,7 @@ public class RouteListViewAdapter extends ArrayAdapter<Route> {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.list_item, parent, false);
             viewHolder.time = (TextView) convertView.findViewById(R.id.time);
-            viewHolder.row = (TableRow) convertView.findViewById(R.id.tableRow);
+            viewHolder.icons = (LinearLayout) convertView.findViewById(R.id.linearLayoutIcons);
             // Cache the viewHolder object inside the fresh view
             convertView.setTag(viewHolder);
         } else {
@@ -75,7 +76,7 @@ public class RouteListViewAdapter extends ArrayAdapter<Route> {
                     break;
                 }
             }
-            viewHolder.row.addView(imgView, 0);
+            viewHolder.icons.addView(imgView, 0);
         }
 
         return convertView;
