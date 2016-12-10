@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private TextView longitude;
     private TextView time;
     private Button startStopBtn;
+    private Button showAllRoutesBtn;
     private ListView trackList;
 
     private boolean isTracking;
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         longitude = (TextView) findViewById(R.id.textLongitude);
         time = (TextView) findViewById(R.id.currentPosition);
         startStopBtn = (Button) findViewById(R.id.startStopBtn);
+        showAllRoutesBtn = (Button) findViewById(R.id.showAllRoutesBtn);
         trackList = (ListView) findViewById(R.id.trackList);
 
         dbFacade = DbFacade.getInstance(this);
@@ -109,6 +112,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if (hasGooglePlay) {
             googleApiClient.connect();
         }
+
+        showAllRoutesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent showRoutesIntent = new Intent(MainActivity.this, AllRoutesActivty.class);
+                startActivity(showRoutesIntent);
+            }
+        });
     }
 
     private void requestLocationPermissions() {
@@ -127,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
             isTracking = !isTracking;
             startStopBtn.setText(R.string.stop);
+            startStopBtn.setBackgroundColor(Color.RED);
 
             if (hasGooglePlay) {
                 LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
@@ -143,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             isTracking = false;
             JSONArray jsonTracks = new JSONArray();
             startStopBtn.setText(R.string.start);
+            startStopBtn.setBackgroundColor(Color.GREEN);
             if (hasGooglePlay) {
                 LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
                 System.out.println("Google Play Services are used to remove updates");
