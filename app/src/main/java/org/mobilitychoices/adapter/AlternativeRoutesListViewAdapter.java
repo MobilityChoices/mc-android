@@ -51,7 +51,7 @@ public class AlternativeRoutesListViewAdapter extends ArrayAdapter<Route> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.time.setText(route.getTime());
+        viewHolder.time.setText(route.getTime() + " min");
 
         for (int i = route.getModes().size() - 1; i >= 0; i--) {
             String s = route.getModes().get(i);

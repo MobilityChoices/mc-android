@@ -1,6 +1,7 @@
 package org.mobilitychoices.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.mobilitychoices.R;
 import org.mobilitychoices.database.DbFacade;
+import org.mobilitychoices.entities.FullTrack;
 import org.mobilitychoices.entities.Location;
 
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<Location> locations;
     private DbFacade dbFacade;
     private Button showAlternativesBtn;
+    private boolean isFullTrack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +39,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        dbFacade = DbFacade.getInstance(this);
-        long currentTrack = (long) getIntent().getExtras().get("currentTrack");
-        locations = dbFacade.getTrack(currentTrack);
+        FullTrack track = (FullTrack) (getIntent().getExtras().getSerializable("fullTrack"));
+        if(track == null){
+            dbFacade = DbFacade.getInstance(this);
+            long currentTrack = (long) getIntent().getExtras().get("currentTrack");
+            locations = dbFacade.getTrack(currentTrack);
+            isFullTrack = false;
+        }else{
+            locations = track.getLocations();
+            isFullTrack= true;
+        }
 
         showAlternativesBtn = (Button) findViewById(R.id.showAlternativesBtn);
         showAlternativesBtn.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +96,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     latLngs) {
                 po.add(l);
             }
-
+            if(isFullTrack){
+                po.color(Color.BLUE);
+            }
             googleMap.addPolyline(po);
         } else {
             Toast.makeText(MapsActivity.this.getApplicationContext(), R.string.ErrorNoLocationsInList, Toast.LENGTH_LONG).show();

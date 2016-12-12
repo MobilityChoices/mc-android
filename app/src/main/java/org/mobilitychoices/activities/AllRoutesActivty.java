@@ -1,6 +1,7 @@
 package org.mobilitychoices.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
@@ -52,6 +53,9 @@ public class AllRoutesActivty extends AppCompatActivity {
                     @Override
                     public void done(Response<Object> result) {
                         System.out.println(((FullTrack)result.getData()).toJSON());
+                        Intent intent = new Intent(AllRoutesActivty.this, MapsActivity.class);
+                        intent.putExtra("fullTrack", (FullTrack) result.getData());
+                        startActivity(intent);
                     }
                 }, token, track.getId()).execute();
             }

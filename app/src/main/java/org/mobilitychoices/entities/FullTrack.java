@@ -4,9 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class FullTrack extends Entity {
+public class FullTrack extends Entity implements Serializable{
     private String owner;
     private ArrayList<Location> locations;
     private String created;
@@ -61,4 +62,7 @@ public class FullTrack extends Entity {
         }
     }
 
+    public ArrayList<Location> getLocations() {
+        return locations;
+    }
 }
