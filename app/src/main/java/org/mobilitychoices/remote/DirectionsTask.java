@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mobilitychoices.entities.Entity;
 import org.mobilitychoices.entities.Routes;
 
 public class DirectionsTask extends AsyncTask<JSONObject,Void,Response<Object>> {

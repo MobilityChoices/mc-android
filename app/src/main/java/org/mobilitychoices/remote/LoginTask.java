@@ -3,7 +3,6 @@ package org.mobilitychoices.remote;
 import android.os.AsyncTask;
 
 import org.json.JSONObject;
-import org.mobilitychoices.entities.Entity;
 import org.mobilitychoices.entities.Token;
 
 public class LoginTask extends AsyncTask<JSONObject,Void,Response<Object>> {

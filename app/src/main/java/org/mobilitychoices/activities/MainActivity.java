@@ -16,9 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,15 +31,11 @@ import org.json.JSONException;
 import org.mobilitychoices.R;
 import org.mobilitychoices.database.DbFacade;
 import org.mobilitychoices.entities.Location;
-import org.mobilitychoices.remote.DirectionsTask;
 import org.mobilitychoices.remote.UploadTrackTask;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-
-import static android.provider.Settings.System.DATE_FORMAT;
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener, android.location.LocationListener {
