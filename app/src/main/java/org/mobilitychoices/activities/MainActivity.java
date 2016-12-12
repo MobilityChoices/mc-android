@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
             isTracking = !isTracking;
             startStopBtn.setText(R.string.stop);
-            startStopBtn.setBackgroundColor(Color.RED);
+            startStopBtn.setBackgroundColor(Color.parseColor("#F44336"));
 
             if (hasGooglePlay) {
                 LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
@@ -148,9 +148,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             currentTrack = dbFacade.saveTrack(System.currentTimeMillis());
         } else {
             isTracking = false;
-            JSONArray jsonTracks = new JSONArray();
             startStopBtn.setText(R.string.start);
-            startStopBtn.setBackgroundColor(Color.GREEN);
+            startStopBtn.setBackgroundColor(Color.parseColor("#4CAF50"));
             if (hasGooglePlay) {
                 LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
                 System.out.println("Google Play Services are used to remove updates");

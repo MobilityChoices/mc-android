@@ -2,6 +2,8 @@ package org.mobilitychoices.activities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +13,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
+import org.mobilitychoices.GeocoderTask;
 import org.mobilitychoices.R;
 import org.mobilitychoices.adapter.AllRoutesListViewAdapter;
 import org.mobilitychoices.entities.Track;
@@ -18,7 +21,9 @@ import org.mobilitychoices.entities.TrackList;
 import org.mobilitychoices.remote.GetAllTracksTask;
 import org.mobilitychoices.remote.Response;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AllRoutesActivty extends AppCompatActivity {
     private ListView listView;
@@ -73,18 +78,29 @@ public class AllRoutesActivty extends AppCompatActivity {
     }
 
     private void showTracks(TrackList data) {
-        ArrayList<Track> tracks = new ArrayList<>();
 
         ArrayList<JSONObject> Jtracks = data.getRoutes();
+        ArrayList<Track> tracks = new ArrayList<>();
 
-        for (int i = 0; i < Jtracks.size(); i++) {
+        for (JSONObject t :
+                Jtracks) {
             Track track = new Track();
-            track.fromJSON(Jtracks.get(i));
+            track.fromJSON(t);
+            track.getStart().setAddress(track.getStart().getLatitude() + "&" + track.getStart().getLongitude());
+            track.getEnd().setAddress(track.getEnd().getLatitude() + "&" + track.getEnd().getLongitude());
             tracks.add(track);
         }
+//        adapter.clear();
+//        adapter.addAll(tracks);
 
-        adapter.clear();
-        adapter.addAll(tracks);
+        new GeocoderTask(new GeocoderTask.IGeocoderCallback() {
+            @Override
+            public void done(ArrayList<Track> response) {
+                System.out.println(response.get(0).toJSON());
+                adapter.clear();
+                adapter.addAll(response);
+            }
+        }, getApplicationContext()).execute(tracks);
     }
 
 }

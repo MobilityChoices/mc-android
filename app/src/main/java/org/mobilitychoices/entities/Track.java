@@ -5,7 +5,8 @@ import org.json.JSONObject;
 
 public class Track extends Entity {
     private String id;
-    private String time;
+    private String duration;
+    private String created;
     private Start start;
     private End end;
 
@@ -22,17 +23,20 @@ public class Track extends Entity {
             id = jsonObject.getString("id");
             JSONObject startJSON = jsonObject.getJSONObject("start");
             JSONObject locationJSON = startJSON.getJSONObject("location");
-            start = new Start(startJSON.getString("address"), locationJSON.getDouble("lat"), locationJSON.getDouble("lon"));
+            start = new Start(locationJSON.getDouble("lat"), locationJSON.getDouble("lon"));
             JSONObject endJSON = jsonObject.getJSONObject("end");
-            JSONObject locationEndJSON = startJSON.getJSONObject("location");
-            end = new End(endJSON.getString("address"), locationEndJSON.getDouble("lat"), locationEndJSON.getDouble("lon"));
-            //TODO time
-            time = "4722 sec";
+            JSONObject locationEndJSON = endJSON.getJSONObject("location");
+            end = new End(locationEndJSON.getDouble("lat"), locationEndJSON.getDouble("lon"));
+
+            JSONObject strings  = jsonObject.getJSONObject("strings");
+            duration = strings.getString("duration");
+            created = strings.getString("created");
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
 
+    }
 
     public String getId() {
         return id;
@@ -46,7 +50,11 @@ public class Track extends Entity {
         return end;
     }
 
-    public String getTime() {
-        return time;
+    public String getDuration() {
+        return duration;
+    }
+
+    public String getCreated() {
+        return created;
     }
 }

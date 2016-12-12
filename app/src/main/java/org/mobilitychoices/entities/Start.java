@@ -5,8 +5,7 @@ public class Start {
     private double latitude;
     private double longitude;
 
-    public Start(String a, double lat, double lng) {
-        address = a;
+    public Start(double lat, double lng) {
         latitude = lat;
         longitude = lng;
     }

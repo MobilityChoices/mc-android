@@ -43,6 +43,7 @@ public class AllRoutesListViewAdapter extends ArrayAdapter<Track> {
             convertView = inflater.inflate(R.layout.list_item, parent, false);
             viewHolder.time = (TextView) convertView.findViewById(R.id.time);
             viewHolder.fromTo = (LinearLayout) convertView.findViewById(R.id.linearLayoutIcons);
+            viewHolder.fromTo.setOrientation(LinearLayout.VERTICAL);
             // Cache the viewHolder object inside the fresh view
             convertView.setTag(viewHolder);
         } else {
@@ -52,12 +53,14 @@ public class AllRoutesListViewAdapter extends ArrayAdapter<Track> {
 
         TextView textViewStart = new TextView(getContext());
         textViewStart.setText(track.getStart().getAddress());
-        TextView textViewEnd = new TextView(getContext());
-        textViewStart.setText(track.getEnd().getAddress());
 
-        viewHolder.fromTo.addView(textViewStart);
-        viewHolder.fromTo.addView(textViewEnd);
-        viewHolder.time.setText(track.getTime());
+        TextView textViewEnd = new TextView(getContext());
+        textViewEnd.setText(track.getEnd().getAddress());
+
+
+        viewHolder.fromTo.addView(textViewStart, 0);
+        viewHolder.fromTo.addView(textViewEnd, 1);
+        viewHolder.time.setText(track.getCreated());
 
         return convertView;
 
