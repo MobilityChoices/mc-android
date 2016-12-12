@@ -54,10 +54,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private TextView time;
     private Button startStopBtn;
     private Button showAllRoutesBtn;
-    private ListView trackList;
+
 
     private boolean isTracking;
     private ArrayList<Location> locations;
+    private JSONArray jsonTracks;
     private DbFacade dbFacade;
     private boolean hasGooglePlay;
 
@@ -81,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         time = (TextView) findViewById(R.id.currentPosition);
         startStopBtn = (Button) findViewById(R.id.startStopBtn);
         showAllRoutesBtn = (Button) findViewById(R.id.showAllRoutesBtn);
-        trackList = (ListView) findViewById(R.id.trackList);
 
         dbFacade = DbFacade.getInstance(this);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -150,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
 
             locations = new ArrayList<>();
+            jsonTracks = new JSONArray();
             currentTrack = dbFacade.saveTrack(System.currentTimeMillis());
         } else {
             isTracking = false;
@@ -164,15 +165,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 System.out.println("Android GPS Services are used to remove updates");
             }
             if(locations != null && locations.size() >= 2){
-                String[] listItems = new String[locations.size()];
-                for (int i = 0; i < locations.size(); i++) {
-                    Location location = locations.get(i);
-                    listItems[i] = "Lat: " + location.getLatitude() + "; Lng: " + location.getLongitude();
-                    jsonTracks.put(location.toJSON());
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
-                trackList.setAdapter(adapter);
-
                 try {
                     System.out.println(jsonTracks.toString(4));
                 } catch (JSONException e) {
@@ -188,7 +180,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     mapsIntent.putExtra("currentTrack", currentTrack);
                     startActivity(mapsIntent);
                 }else{
-                    //TODO
+                    Intent alternative = new Intent(MainActivity.this, MapsAlternativeActivity.class);
+                    alternative.putExtra("currentTrack", currentTrack);
+                    startActivity(alternative);
                 }
             }
         }
@@ -291,6 +285,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         time.setText("Current position: " + dateFormat.format(date));
 
         locations.add(location);
+        jsonTracks.put(location.toJSON());
         long id = dbFacade.saveLocation(location, currentTrack);
         System.out.println("New location db-id: " + id);
     }

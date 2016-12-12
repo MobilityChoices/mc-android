@@ -59,6 +59,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.mobilitychoices.activities.MainActivity" />
         </activity>
+        <activity
+            android:name=".activities.MapsAlternativeActivity"
+            android:label="@string/title_activity_maps_alternative"
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.mobilitychoices.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

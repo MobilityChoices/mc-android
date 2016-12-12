@@ -38,4 +38,5 @@
     <string name="startBtn">Start</string>
     <string name="show_all_my_tracks">Show all my tracks</string>
     <string name="title_activity_all_routes_activty">All My Routes</string>
+    <string name="title_activity_maps_alternative">My Route</string>
 </resources>
