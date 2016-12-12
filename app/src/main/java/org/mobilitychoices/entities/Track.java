@@ -7,13 +7,30 @@ public class Track extends Entity {
     private String id;
     private String duration;
     private String created;
-    private Start start;
-    private End end;
+    private Point start;
+    private Point end;
 
     @Override
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
-        //TODO
+        try {
+            jsonObject.put("id", id);
+            jsonObject.put("duration", duration);
+            jsonObject.put("created", created);
+            JSONObject start2 = new JSONObject();
+            start2.put("lat", start.getLatitude());
+            start2.put("lng", start.getLongitude());
+            start2.put("address", start.getAddress());
+            jsonObject.put("start", start2);
+            JSONObject end2 = new JSONObject();
+            end2.put("lat", end.getLatitude());
+            end2.put("lng", end.getLongitude());
+            end2.put("address", end.getAddress());
+            jsonObject.put("end", end2);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         return jsonObject;
     }
 
@@ -23,10 +40,10 @@ public class Track extends Entity {
             id = jsonObject.getString("id");
             JSONObject startJSON = jsonObject.getJSONObject("start");
             JSONObject locationJSON = startJSON.getJSONObject("location");
-            start = new Start(locationJSON.getDouble("lat"), locationJSON.getDouble("lon"));
+            start = new Point(locationJSON.getDouble("lat"), locationJSON.getDouble("lon"));
             JSONObject endJSON = jsonObject.getJSONObject("end");
             JSONObject locationEndJSON = endJSON.getJSONObject("location");
-            end = new End(locationEndJSON.getDouble("lat"), locationEndJSON.getDouble("lon"));
+            end = new Point(locationEndJSON.getDouble("lat"), locationEndJSON.getDouble("lon"));
 
             JSONObject strings  = jsonObject.getJSONObject("strings");
             duration = strings.getString("duration");
@@ -42,11 +59,11 @@ public class Track extends Entity {
         return id;
     }
 
-    public Start getStart() {
+    public Point getStart() {
         return start;
     }
 
-    public End getEnd() {
+    public Point getEnd() {
         return end;
     }
 

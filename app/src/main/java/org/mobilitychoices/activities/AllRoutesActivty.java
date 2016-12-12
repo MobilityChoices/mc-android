@@ -16,9 +16,11 @@ import org.json.JSONObject;
 import org.mobilitychoices.GeocoderTask;
 import org.mobilitychoices.R;
 import org.mobilitychoices.adapter.AllRoutesListViewAdapter;
+import org.mobilitychoices.entities.FullTrack;
 import org.mobilitychoices.entities.Track;
 import org.mobilitychoices.entities.TrackList;
 import org.mobilitychoices.remote.GetAllTracksTask;
+import org.mobilitychoices.remote.GetTrackTask;
 import org.mobilitychoices.remote.Response;
 
 import java.io.IOException;
@@ -39,12 +41,19 @@ public class AllRoutesActivty extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         listView = (ListView) findViewById(R.id.allRoutesListView);
+        sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        String token = sharedPref.getString("token", null);
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Track track = adapter.getItem(position);
-                Toast.makeText(getApplicationContext(), "An item of the ListView is clicked.", Toast.LENGTH_LONG).show();
-
+                new GetTrackTask(new GetTrackTask.IGetTrackCallback() {
+                    @Override
+                    public void done(Response<Object> result) {
+                        System.out.println(((FullTrack)result.getData()).toJSON());
+                    }
+                }, token, track.getId()).execute();
             }
         });
 
@@ -52,13 +61,10 @@ public class AllRoutesActivty extends AppCompatActivity {
         adapter = new AllRoutesListViewAdapter(this, R.layout.list_item, 0, arrayOfTracks);
         listView.setAdapter(adapter);
 
-        requestTracks();
+        requestTracks(token);
     }
 
-    private void requestTracks() {
-        sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-        String token = sharedPref.getString("token", null);
-
+    private void requestTracks(String token) {
         new GetAllTracksTask(new GetAllTracksTask.IGetAllTracksCallback() {
             @Override
             public void done(Response<Object> response) {
@@ -90,8 +96,6 @@ public class AllRoutesActivty extends AppCompatActivity {
             track.getEnd().setAddress(track.getEnd().getLatitude() + "&" + track.getEnd().getLongitude());
             tracks.add(track);
         }
-//        adapter.clear();
-//        adapter.addAll(tracks);
 
         new GeocoderTask(new GeocoderTask.IGeocoderCallback() {
             @Override

@@ -39,6 +39,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         dbFacade = DbFacade.getInstance(this);
         long currentTrack = (long) getIntent().getExtras().get("currentTrack");
         locations = dbFacade.getTrack(currentTrack);
+
         showAlternativesBtn = (Button) findViewById(R.id.showAlternativesBtn);
         showAlternativesBtn.setOnClickListener(new View.OnClickListener() {
             @Override

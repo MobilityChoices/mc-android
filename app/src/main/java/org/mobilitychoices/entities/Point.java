@@ -1,11 +1,11 @@
 package org.mobilitychoices.entities;
 
-public class End {
+public class Point {
     private String address;
     private double latitude;
     private double longitude;
 
-    public End(double lat, double lng) {
+    public Point(double lat, double lng) {
         latitude = lat;
         longitude = lng;
     }
