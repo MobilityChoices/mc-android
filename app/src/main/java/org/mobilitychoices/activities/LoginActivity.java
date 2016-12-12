@@ -179,7 +179,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     LoginActivity.this.finish();
                 } else {
                     Log.i("Login", "Login failed " + response.getCode());
-                    if(response.getCode() == 400){
+                    if (response.getCode() == 400) {
                         ResponseError error = response.getError();
                         Log.i("Login", "Error: " + error.getTarget());
                         switch (error.getTarget()) {
@@ -198,7 +198,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 mEmailView.setError("Email or Password incorrect");
                                 break;
                         }
-                    }else{
+                    } else {
                         Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf(getString(R.string.internalServerError)), Toast.LENGTH_LONG).show();
                     }
                 }
@@ -312,8 +312,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf("You can't press BACK at this point of the application! PLEASE LOGIN"), Toast.LENGTH_LONG).show();
     }
 

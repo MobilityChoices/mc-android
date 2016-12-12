@@ -5,7 +5,7 @@ public class Response<T> {
     private T data;
     private ResponseError error;
 
-    public Response(int code, T data, ResponseError error){
+    public Response(int code, T data, ResponseError error) {
         this.code = code;
         this.data = data;
         this.error = error;

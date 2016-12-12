@@ -5,11 +5,11 @@ import android.os.AsyncTask;
 import org.json.JSONObject;
 import org.mobilitychoices.entities.Entity;
 
-public class RegisterTask extends AsyncTask<JSONObject,Void,Response<Object>> {
+public class RegisterTask extends AsyncTask<JSONObject, Void, Response<Object>> {
 
     private IRegisterCallback registerCallback;
 
-    public RegisterTask(IRegisterCallback callback){
+    public RegisterTask(IRegisterCallback callback) {
         registerCallback = callback;
     }
 
@@ -17,7 +17,7 @@ public class RegisterTask extends AsyncTask<JSONObject,Void,Response<Object>> {
     protected Response<Object> doInBackground(JSONObject... jsonObject) {
         JSONObject object = jsonObject[0];
         String urlString = "/auth/register";
-        return new Connection().request(urlString, object,null, Entity.class);
+        return new Connection().request(urlString, object, null, Entity.class);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class RegisterTask extends AsyncTask<JSONObject,Void,Response<Object>> {
     }
 
     @FunctionalInterface
-    public interface IRegisterCallback{
+    public interface IRegisterCallback {
         void done(Response<Object> success);
     }
 }

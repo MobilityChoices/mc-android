@@ -14,7 +14,7 @@ public class UploadTrackTask extends AsyncTask<Object, Object, Response> {
 
     private String token;
 
-    public UploadTrackTask(String token){
+    public UploadTrackTask(String token) {
         this.token = token;
     }
 

@@ -11,9 +11,9 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mobilitychoices.R;
-import org.mobilitychoices.RouteListViewAdapter;
+import org.mobilitychoices.adapter.AlternativeRoutesListViewAdapter;
 import org.mobilitychoices.entities.Route;
-import org.mobilitychoices.entities.Routes;
+import org.mobilitychoices.entities.RoutesList;
 import org.mobilitychoices.remote.DirectionsTask;
 import org.mobilitychoices.remote.Response;
 
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class DirectionsActivity extends AppCompatActivity {
 
     private ListView listView;
-    private RouteListViewAdapter adapter;
+    private AlternativeRoutesListViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class DirectionsActivity extends AppCompatActivity {
         });
 
         ArrayList<Route> arrayOfRoutes = new ArrayList<Route>();
-        adapter = new RouteListViewAdapter(this, R.layout.list_item, 0, arrayOfRoutes);
+        adapter = new AlternativeRoutesListViewAdapter(this, R.layout.list_item, 0, arrayOfRoutes);
         listView.setAdapter(adapter);
 
         requestRoutes();
@@ -66,7 +66,7 @@ public class DirectionsActivity extends AppCompatActivity {
             public void done(Response<Object> response) {
                 if (response != null) {
                     if (response.getCode() == 200) {
-                        showAlternativeRoutes((Routes) response.getData());
+                        showAlternativeRoutes((RoutesList) response.getData());
                     } else {
                         if (response.getCode() == 400) {
                             //irgendwas fehlt origin oder dest
@@ -79,7 +79,7 @@ public class DirectionsActivity extends AppCompatActivity {
         }).execute(jsonObject);
     }
 
-    private void showAlternativeRoutes(Routes data) {
+    private void showAlternativeRoutes(RoutesList data) {
         ArrayList<Route> routes = new ArrayList<>();
 
         ArrayList<JSONObject> Jroutes = data.getRoutes();

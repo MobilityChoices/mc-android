@@ -4,13 +4,13 @@ import android.os.AsyncTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mobilitychoices.entities.Routes;
+import org.mobilitychoices.entities.RoutesList;
 
-public class DirectionsTask extends AsyncTask<JSONObject,Void,Response<Object>> {
+public class DirectionsTask extends AsyncTask<JSONObject, Void, Response<Object>> {
 
     private IDirectionsCallback iDirectionsCallback;
 
-    public DirectionsTask(IDirectionsCallback callback){
+    public DirectionsTask(IDirectionsCallback callback) {
         iDirectionsCallback = callback;
     }
 
@@ -23,7 +23,7 @@ public class DirectionsTask extends AsyncTask<JSONObject,Void,Response<Object>> 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return new Connection().request(urlString, object,null, Routes.class, "GET");
+        return new Connection().request(urlString, object, null, RoutesList.class, "GET");
     }
 
     @Override
@@ -32,7 +32,7 @@ public class DirectionsTask extends AsyncTask<JSONObject,Void,Response<Object>> 
     }
 
     @FunctionalInterface
-    public interface IDirectionsCallback{
+    public interface IDirectionsCallback {
         void done(Response<Object> success);
     }
 }

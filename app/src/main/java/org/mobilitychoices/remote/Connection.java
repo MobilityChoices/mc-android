@@ -34,11 +34,11 @@ public class Connection<T extends Entity> {
                     conn.setRequestProperty(p.first, p.second);
                 }
             }
-            if(!requestMethod.equals("GET")){
+            if (!requestMethod.equals("GET")) {
                 conn.setDoOutput(true);
                 DataOutputStream dataOutputStream = new DataOutputStream(conn.getOutputStream());
 
-                if(object != null){
+                if (object != null) {
                     try {
                         System.out.println(object.toString(4));
                     } catch (JSONException e) {
@@ -69,13 +69,13 @@ public class Connection<T extends Entity> {
             bufferedReader.close();
             String result = sb.toString();
             JSONObject jsonResult = null;
-            try{
+            try {
                 jsonResult = new JSONObject(result);
-            }catch (JSONException ex){
+            } catch (JSONException ex) {
                 ex.printStackTrace();
             }
 
-            if(jsonResult != null){
+            if (jsonResult != null) {
                 System.out.println(jsonResult.toString(4));
             }
 

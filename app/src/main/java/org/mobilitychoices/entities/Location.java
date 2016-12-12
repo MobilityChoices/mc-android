@@ -20,7 +20,7 @@ public class Location implements Serializable {
         this.time = location.getTime();
     }
 
-    public Location(double latitude, double longitude, double altitude, double speed, long time){
+    public Location(double latitude, double longitude, double altitude, double speed, long time) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.altitude = altitude;
@@ -48,7 +48,7 @@ public class Location implements Serializable {
         return time;
     }
 
-    public JSONObject toJSON(){
+    public JSONObject toJSON() {
         JSONObject obj = new JSONObject();
         try {
             obj.put("latitude", Double.valueOf(latitude));

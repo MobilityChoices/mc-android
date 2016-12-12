@@ -27,7 +27,7 @@ public class MapsAlternativeActivity extends AppCompatActivity {
 
         trackList = (ListView) findViewById(R.id.trackList);
         dbFacade = DbFacade.getInstance(this);
-        long currentTrack =  (long) getIntent().getExtras().get("currentTrack");
+        long currentTrack = (long) getIntent().getExtras().get("currentTrack");
         locations = dbFacade.getTrack(currentTrack);
 
         String[] listItems = new String[locations.size()];

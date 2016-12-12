@@ -37,7 +37,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         dbFacade = DbFacade.getInstance(this);
-        long currentTrack =  (long) getIntent().getExtras().get("currentTrack");
+        long currentTrack = (long) getIntent().getExtras().get("currentTrack");
         locations = dbFacade.getTrack(currentTrack);
         showAlternativesBtn = (Button) findViewById(R.id.showAlternativesBtn);
         showAlternativesBtn.setOnClickListener(new View.OnClickListener() {
@@ -74,20 +74,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             latLngs.add(new LatLng(location.getLatitude(), location.getLongitude()));
         }
 
-        if(locations != null && locations.size() >= 1){
+        if (locations != null && locations.size() >= 1) {
             LatLng latLng = new LatLng(locations.get(0).getLatitude(), locations.get(0).getLongitude());
 
             CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(10).build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
             PolylineOptions po = new PolylineOptions().geodesic(true);
-            for (LatLng l:
+            for (LatLng l :
                     latLngs) {
                 po.add(l);
             }
 
             googleMap.addPolyline(po);
-        }else{
+        } else {
             Toast.makeText(MapsActivity.this.getApplicationContext(), R.string.ErrorNoLocationsInList, Toast.LENGTH_LONG).show();
         }
 

@@ -61,7 +61,7 @@ public class RegisterActivity extends AppCompatActivity {
                 new RegisterTask(new RegisterTask.IRegisterCallback() {
                     @Override
                     public void done(Response<Object> response) {
-                        if(response != null){
+                        if (response != null) {
                             Log.i(RegisterActivity.class.getName(), String.valueOf(response.getCode()));
 
                             if (response.getCode() == 201) {
@@ -72,12 +72,12 @@ public class RegisterActivity extends AppCompatActivity {
                             } else {
                                 if (response.getCode() == 400) {
                                     ResponseError error = response.getError();
-                                    if(error.getTarget().equals("password")){
+                                    if (error.getTarget().equals("password")) {
                                         password_confirm_EditText.setText("");
                                         password_EditText.setText("");
                                         password_EditText.setError("Invalid Password! Min. length: 3");
                                         password_EditText.requestFocus();
-                                    }else if(error.getTarget().equals("email")){
+                                    } else if (error.getTarget().equals("email")) {
                                         email_EditText.setError("Email invalid or already in use!");
                                         email_EditText.requestFocus();
                                     }

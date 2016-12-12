@@ -3,14 +3,15 @@ package org.mobilitychoices.database;
 import android.provider.BaseColumns;
 
 final class TrackContract {
-    private TrackContract(){}
+    private TrackContract() {
+    }
 
-    static class TrackEntry implements BaseColumns{
+    static class TrackEntry implements BaseColumns {
         static final String TRACKS_TABLE_NAME = "Tracks";
         static final String COLUMN_TIME = "time";
     }
 
-    static class LocationEntry implements BaseColumns{
+    static class LocationEntry implements BaseColumns {
         static final String LOCATION_TABLE_NAME = "Location";
         static final String COLUMN_TRACK_ID = "track";
         static final String COLUMN_LATITUDE = "latitude";

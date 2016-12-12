@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 locationManager.removeUpdates(this);
                 System.out.println("Android GPS Services are used to remove updates");
             }
-            if(locations != null && locations.size() >= 2){
+            if (locations != null && locations.size() >= 2) {
                 try {
                     System.out.println(jsonTracks.toString(4));
                 } catch (JSONException e) {
@@ -169,11 +169,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 String token = sharedPreferences.getString("token", null);
                 new UploadTrackTask(token).execute(jsonTracks);
 
-                if(hasGooglePlay){
+                if (hasGooglePlay) {
                     Intent mapsIntent = new Intent(MainActivity.this, MapsActivity.class);
                     mapsIntent.putExtra("currentTrack", currentTrack);
                     startActivity(mapsIntent);
-                }else{
+                } else {
                     Intent alternative = new Intent(MainActivity.this, MapsAlternativeActivity.class);
                     alternative.putExtra("currentTrack", currentTrack);
                     startActivity(alternative);
@@ -217,14 +217,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if(R.id.action_logout == id){
+        if (R.id.action_logout == id) {
             SharedPreferences sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPrefs.edit();
             editor.remove("token");
             editor.apply();
             Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(loginIntent);
-        }else if(id == R.id.action_settings){
+        } else if (id == R.id.action_settings) {
             return true;
         }
 

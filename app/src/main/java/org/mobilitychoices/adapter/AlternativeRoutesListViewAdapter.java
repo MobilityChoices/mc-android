@@ -1,4 +1,4 @@
-package org.mobilitychoices;
+package org.mobilitychoices.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,17 +9,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.mobilitychoices.R;
 import org.mobilitychoices.entities.Route;
 
 import java.util.ArrayList;
 
-public class RouteListViewAdapter extends ArrayAdapter<Route> {
+public class AlternativeRoutesListViewAdapter extends ArrayAdapter<Route> {
 
     private Context context;
     private int resource;
     private ArrayList<Route> routes;
 
-    public RouteListViewAdapter(Context context, int resource, int id, ArrayList<Route> routes) {
+    public AlternativeRoutesListViewAdapter(Context context, int resource, int id, ArrayList<Route> routes) {
         super(context, resource, id, routes);
         this.context = context;
         this.resource = resource;
