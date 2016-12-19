@@ -168,15 +168,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 String token = sharedPreferences.getString("token", null);
                 new UploadTrackTask(token).execute(jsonTracks);
 
-                if (hasGooglePlay) {
-                    Intent mapsIntent = new Intent(MainActivity.this, MapsActivity.class);
-                    mapsIntent.putExtra("currentTrack", currentTrack);
-                    startActivity(mapsIntent);
-                } else {
-                    Intent alternative = new Intent(MainActivity.this, MapsAlternativeActivity.class);
-                    alternative.putExtra("currentTrack", currentTrack);
-                    startActivity(alternative);
-                }
+                Intent mapsIntent = new Intent(MainActivity.this, MapsActivity.class);
+                mapsIntent.putExtra("currentTrack", currentTrack);
+                startActivity(mapsIntent);
             }
         }
     }
