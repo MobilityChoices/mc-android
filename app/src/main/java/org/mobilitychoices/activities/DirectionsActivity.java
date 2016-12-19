@@ -48,14 +48,7 @@ public class DirectionsActivity extends AppCompatActivity {
                 Intent intent = new Intent(DirectionsActivity.this, MapsActivity.class);
                 ArrayList<Location> locations = new ArrayList<Location>();
                 ArrayList<Step> steps = route.getSteps();
-                for(int i = 0; i < steps.size(); i++){
-                    Step current = steps.get(i);
-                    Location location = new Location(current.getStart().getLatitude(), current.getStart().getLongitude(), 0, 0, 0);
-                    locations.add(location);
-                }
-                Point end  =steps.get(steps.size()-1).getEnd();
-                Location endPoint = new Location(end.getLatitude(), end.getLongitude(), 0, 0, 0);
-                locations.add(endPoint);
+                locations = createLocationsList(locations, steps);
                 intent.putExtra("locations", locations);
                 startActivity(intent);
             }
@@ -66,6 +59,21 @@ public class DirectionsActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
 
         requestRoutes();
+    }
+
+    private ArrayList<Location> createLocationsList(ArrayList<Location> locations, ArrayList<Step> steps) {
+        for (int i = 0; i < steps.size(); i++) {
+            Step current = steps.get(i);
+            Location location = new Location(current.getStart().getLatitude(), current.getStart().getLongitude(), 0, 0, 0);
+            locations.add(location);
+            if (current.getSubsteps() != null && current.getSubsteps().size() > 0) {
+                locations = createLocationsList(locations, current.getSubsteps());
+            }
+        }
+        Point end = steps.get(steps.size() - 1).getEnd();
+        Location endPoint = new Location(end.getLatitude(), end.getLongitude(), 0, 0, 0);
+        locations.add(endPoint);
+        return locations;
     }
 
     private void requestRoutes() {
