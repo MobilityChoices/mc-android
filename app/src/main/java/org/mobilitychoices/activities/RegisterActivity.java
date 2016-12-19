@@ -64,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
                         if (response != null) {
                             Log.i(RegisterActivity.class.getName(), String.valueOf(response.getCode()));
 
-                            switch (response.getCode()){
+                            switch (response.getCode()) {
                                 case 201:
                                     Intent resultData = new Intent();
                                     resultData.putExtra("email", email);

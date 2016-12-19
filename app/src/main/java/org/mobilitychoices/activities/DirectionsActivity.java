@@ -87,8 +87,8 @@ public class DirectionsActivity extends AppCompatActivity {
         new DirectionsTask(new DirectionsTask.IDirectionsCallback() {
             @Override
             public void done(Response<Object> response) {
-                if(response != null){
-                    switch (response.getCode()){
+                if (response != null) {
+                    switch (response.getCode()) {
                         case 200:
                             showAlternativeRoutes((RoutesList) response.getData());
                             break;

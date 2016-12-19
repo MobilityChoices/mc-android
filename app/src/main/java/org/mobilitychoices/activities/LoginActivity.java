@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         new MeTask(new MeTask.IMeCallback() {
             @Override
             public void done(Response<Object> response) {
-                if(response != null){
+                if (response != null) {
                     if (response.getCode() == 200) {
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         LoginActivity.this.startActivity(intent);
