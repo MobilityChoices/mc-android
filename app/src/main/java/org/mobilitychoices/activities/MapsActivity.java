@@ -69,7 +69,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -84,11 +83,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.getUiSettings().setZoomControlsEnabled(true);
 
         ArrayList<LatLng> latLngs = new ArrayList<>();
-        for (Location location :
-                locations) {
+        for (Location location : locations) {
             latLngs.add(new LatLng(location.getLatitude(), location.getLongitude()));
         }
-
         if (locations != null && locations.size() >= 1) {
             LatLng latLng = new LatLng(locations.get(0).getLatitude(), locations.get(0).getLongitude());
 
@@ -96,8 +93,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
             PolylineOptions po = new PolylineOptions().geodesic(true);
-            for (LatLng l :
-                    latLngs) {
+            for (LatLng l : latLngs) {
                 po.add(l);
             }
             if (isFullTrack) {
@@ -107,6 +103,5 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             Toast.makeText(MapsActivity.this.getApplicationContext(), R.string.ErrorNoLocationsInList, Toast.LENGTH_LONG).show();
         }
-
     }
 }

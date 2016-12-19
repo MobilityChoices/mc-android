@@ -24,10 +24,7 @@ public class GeocoderTask extends AsyncTask<ArrayList<Track>, Object, ArrayList<
     @Override
     protected ArrayList<Track> doInBackground(ArrayList<Track>... arrayLists) {
         ArrayList<Track> tracks = arrayLists[0];
-
-        for (Track t :
-                tracks) {
-            System.out.println("Geocoder loop: " + t.getId());
+        for (Track t : tracks) {
             Geocoder geocoder = new Geocoder(context);
             List<Address> startAddress;
             List<Address> endAddress;

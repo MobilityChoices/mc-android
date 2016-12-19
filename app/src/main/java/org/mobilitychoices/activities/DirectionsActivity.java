@@ -37,7 +37,6 @@ public class DirectionsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         listView = (ListView) findViewById(R.id.routesListView);
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(), "An item of the ListView is clicked.", Toast.LENGTH_LONG).show();
@@ -70,8 +69,7 @@ public class DirectionsActivity extends AppCompatActivity {
             }
         }
         Point end = steps.get(steps.size() - 1).getEnd();
-        Location endPoint = new Location(end.getLatitude(), end.getLongitude(), 0, 0, 0);
-        locations.add(endPoint);
+        locations.add(new Location(end.getLatitude(), end.getLongitude(), 0, 0, 0));
         return locations;
     }
 
@@ -90,15 +88,16 @@ public class DirectionsActivity extends AppCompatActivity {
         new DirectionsTask(new DirectionsTask.IDirectionsCallback() {
             @Override
             public void done(Response<Object> response) {
-                if (response != null) {
-                    if (response.getCode() == 200) {
-                        showAlternativeRoutes((RoutesList) response.getData());
-                    } else {
-                        if (response.getCode() == 400) {
-                            //irgendwas fehlt origin oder dest
-                        } else {
+                if(response != null){
+                    switch (response.getCode()){
+                        case 200:
+                            showAlternativeRoutes((RoutesList) response.getData());
+                            break;
+                        case 400:
+                            //TODO irgendwas fehlt origin oder dest
+                            break;
+                        default:
                             Toast.makeText(DirectionsActivity.this.getApplicationContext(), String.valueOf(getString(R.string.internalServerError)), Toast.LENGTH_LONG).show();
-                        }
                     }
                 }
             }
@@ -107,18 +106,13 @@ public class DirectionsActivity extends AppCompatActivity {
 
     private void showAlternativeRoutes(RoutesList data) {
         ArrayList<Route> routes = new ArrayList<>();
-
         ArrayList<JSONObject> Jroutes = data.getRoutes();
-
         for (int i = 0; i < Jroutes.size(); i++) {
             Route route = new Route(Jroutes.get(i));
             route.fromJSON(Jroutes.get(i));
             routes.add(route);
         }
-
         adapter.clear();
         adapter.addAll(routes);
     }
-
-
 }

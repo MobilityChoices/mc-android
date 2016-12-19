@@ -24,8 +24,7 @@ public class FullTrack extends Entity implements Serializable {
             jsonObject.put("owner", owner);
             jsonObject.put("creted", created);
             JSONArray locationsJson = new JSONArray();
-            for (Location l :
-                    locations) {
+            for (Location l : locations) {
                 JSONObject loc = new JSONObject();
                 loc.put("time", l.getTime());
                 JSONObject loc2 = new JSONObject();

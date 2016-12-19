@@ -37,18 +37,15 @@ public class AllRoutesActivty extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        listView = (ListView) findViewById(R.id.allRoutesListView);
         sharedPref = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         String token = sharedPref.getString("token", null);
-
-
+        listView = (ListView) findViewById(R.id.allRoutesListView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Track track = adapter.getItem(position);
                 new GetTrackTask(new GetTrackTask.IGetTrackCallback() {
                     @Override
                     public void done(Response<Object> result) {
-                        System.out.println(((FullTrack) result.getData()).toJSON());
                         Intent intent = new Intent(AllRoutesActivty.this, MapsActivity.class);
                         intent.putExtra("fullTrack", (FullTrack) result.getData());
                         startActivity(intent);
@@ -86,7 +83,6 @@ public class AllRoutesActivty extends AppCompatActivity {
     }
 
     private void showTracks(TrackList data) {
-
         ArrayList<JSONObject> jTracks = data.getRoutes();
         ArrayList<Track> tracks = new ArrayList<>();
 
@@ -101,11 +97,9 @@ public class AllRoutesActivty extends AppCompatActivity {
         new GeocoderTask(new GeocoderTask.IGeocoderCallback() {
             @Override
             public void done(ArrayList<Track> response) {
-                System.out.println(response.get(0).toJSON());
                 adapter.clear();
                 adapter.addAll(response);
             }
         }, getApplicationContext()).execute(tracks);
     }
-
 }
