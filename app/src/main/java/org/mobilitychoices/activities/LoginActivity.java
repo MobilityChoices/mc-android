@@ -54,10 +54,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         checkIfUserIsAlreadyLoggedIn();
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         initViewComponents();
     }
 
@@ -93,16 +91,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         new MeTask(new MeTask.IMeCallback() {
             @Override
             public void done(Response<Object> response) {
-                Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf(response.getCode()), Toast.LENGTH_SHORT).show();
-                if (response.getCode() == 200) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    LoginActivity.this.startActivity(intent);
-                    LoginActivity.this.finish();
-                } else if (response.getCode() == 401) {
-                    //remove token from preferences
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.clear();
-                    editor.apply();
+                if (response != null) {
+                    if (response.getCode() == 200) {
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        LoginActivity.this.startActivity(intent);
+                        LoginActivity.this.finish();
+                    } else if (response.getCode() == 401) {
+                        //remove token from preferences
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.clear();
+                        editor.apply();
+                    }
                 }
             }
         }, token).execute();
@@ -166,20 +165,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void done(Response<Object> response) {
                 Log.i(LoginActivity.class.getName(), String.valueOf(response.getCode()));
                 LoginActivity.this.showProgress(false);
+                switch (response.getCode()) {
+                    case 200:
+                        Token data = (Token) response.getData();
+                        String token = data.getToken();
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString("token", token);
+                        editor.apply();
 
-                if (response.getCode() == 200) {
-                    Token data = (Token) response.getData();
-                    String token = data.getToken();
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putString("token", token);
-                    editor.apply();
-
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    LoginActivity.this.startActivity(intent);
-                    LoginActivity.this.finish();
-                } else {
-                    Log.i("Login", "Login failed " + response.getCode());
-                    if(response.getCode() == 400){
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        LoginActivity.this.startActivity(intent);
+                        LoginActivity.this.finish();
+                        break;
+                    case 400:
                         ResponseError error = response.getError();
                         Log.i("Login", "Error: " + error.getTarget());
                         switch (error.getTarget()) {
@@ -198,9 +196,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 mEmailView.setError("Email or Password incorrect");
                                 break;
                         }
-                    }else{
+                        break;
+                    default:
                         Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf(getString(R.string.internalServerError)), Toast.LENGTH_LONG).show();
-                    }
                 }
             }
         }).execute(jsonObject);
@@ -312,11 +310,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         Toast.makeText(LoginActivity.this.getApplicationContext(), String.valueOf("You can't press BACK at this point of the application! PLEASE LOGIN"), Toast.LENGTH_LONG).show();
     }
-
-
 }
 

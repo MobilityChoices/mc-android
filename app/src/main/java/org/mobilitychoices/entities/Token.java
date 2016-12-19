@@ -8,7 +8,7 @@ public class Token extends Entity {
     String token;
 
     @Override
-    public JSONObject toJSON(){
+    public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("token", token);
@@ -19,7 +19,7 @@ public class Token extends Entity {
     }
 
     @Override
-    public void fromJSON(JSONObject jsonObject){
+    public void fromJSON(JSONObject jsonObject) {
         try {
             token = jsonObject.getString("token");
         } catch (JSONException e) {

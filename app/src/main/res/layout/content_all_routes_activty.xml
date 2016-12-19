@@ -13,4 +13,10 @@
     tools:context="org.mobilitychoices.activities.AllRoutesActivty"
     tools:showIn="@layout/activity_all_routes_activty">
 
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/allRoutesListView"/>
+
 </RelativeLayout>

@@ -3,38 +3,39 @@ package org.mobilitychoices.remote;
 import android.os.AsyncTask;
 import android.util.Pair;
 
-import org.mobilitychoices.entities.Entity;
+import org.mobilitychoices.entities.FullTrack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MeTask extends AsyncTask<Void, Void, Response<Object>> {
+public class GetTrackTask extends AsyncTask<Void, Void, Response<Object>> {
 
+    private IGetTrackCallback iGetTracksCallback;
+    private String id;
     private String token;
-    private IMeCallback meCallback;
 
-    public MeTask(IMeCallback callback, String token) {
-        this.meCallback = callback;
+    public GetTrackTask(IGetTrackCallback callback, String token, String id) {
+        iGetTracksCallback = callback;
         this.token = token;
+        this.id = id;
     }
 
     @Override
     protected Response<Object> doInBackground(Void... voids) {
-        String urlString = "/me";
-
+        String urlString = "/tracks/" + id;
         List<Pair<String, String>> headers = new ArrayList<>();
         headers.add(new Pair<>("Authorization", token));
 
-        return new Connection().request(urlString, null, headers, Entity.class, "GET");
+        return new Connection().request(urlString, null, headers, FullTrack.class, "GET");
     }
 
     @Override
     protected void onPostExecute(Response<Object> result) {
-        meCallback.done(result);
+        iGetTracksCallback.done(result);
     }
 
     @FunctionalInterface
-    public interface IMeCallback {
+    public interface IGetTrackCallback {
         void done(Response<Object> success);
     }
 }

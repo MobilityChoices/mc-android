@@ -5,7 +5,7 @@ public class ResponseError {
     private String message;
     private String target;
 
-    public ResponseError(String code, String message, String target){
+    public ResponseError(String code, String message, String target) {
         this.code = code;
         this.message = message;
         this.target = target;

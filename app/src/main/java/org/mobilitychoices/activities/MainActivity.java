@@ -16,9 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,15 +31,11 @@ import org.json.JSONException;
 import org.mobilitychoices.R;
 import org.mobilitychoices.database.DbFacade;
 import org.mobilitychoices.entities.Location;
-import org.mobilitychoices.remote.DirectionsTask;
 import org.mobilitychoices.remote.UploadTrackTask;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-
-import static android.provider.Settings.System.DATE_FORMAT;
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener, android.location.LocationListener {
@@ -138,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
             isTracking = !isTracking;
             startStopBtn.setText(R.string.stop);
-            startStopBtn.setBackgroundColor(Color.RED);
+            startStopBtn.setBackgroundColor(Color.parseColor("#F44336"));
 
             if (hasGooglePlay) {
                 LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
@@ -154,9 +148,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             currentTrack = dbFacade.saveTrack(System.currentTimeMillis());
         } else {
             isTracking = false;
-            JSONArray jsonTracks = new JSONArray();
             startStopBtn.setText(R.string.start);
-            startStopBtn.setBackgroundColor(Color.GREEN);
+            startStopBtn.setBackgroundColor(Color.parseColor("#4CAF50"));
             if (hasGooglePlay) {
                 LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
                 System.out.println("Google Play Services are used to remove updates");
@@ -164,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 locationManager.removeUpdates(this);
                 System.out.println("Android GPS Services are used to remove updates");
             }
-            if(locations != null && locations.size() >= 2){
+            if (locations != null && locations.size() >= 2) {
                 try {
                     System.out.println(jsonTracks.toString(4));
                 } catch (JSONException e) {
@@ -175,11 +168,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 String token = sharedPreferences.getString("token", null);
                 new UploadTrackTask(token).execute(jsonTracks);
 
-                if(hasGooglePlay){
+                if (hasGooglePlay) {
                     Intent mapsIntent = new Intent(MainActivity.this, MapsActivity.class);
                     mapsIntent.putExtra("currentTrack", currentTrack);
                     startActivity(mapsIntent);
-                }else{
+                } else {
                     Intent alternative = new Intent(MainActivity.this, MapsAlternativeActivity.class);
                     alternative.putExtra("currentTrack", currentTrack);
                     startActivity(alternative);
@@ -223,14 +216,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if(R.id.action_logout == id){
+        if (R.id.action_logout == id) {
             SharedPreferences sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPrefs.edit();
             editor.remove("token");
             editor.apply();
             Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(loginIntent);
-        }else if(id == R.id.action_settings){
+        } else if (id == R.id.action_settings) {
             return true;
         }
 

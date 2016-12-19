@@ -6,22 +6,24 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Routes extends Entity {
+public abstract class ListGenerator extends Entity {
 
-    ArrayList<JSONObject> routes = new ArrayList<>();
+    private ArrayList<JSONObject> routes = new ArrayList<>();
+
+    protected abstract String getName();
 
     @Override
-    public JSONObject toJSON(){
+    public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
         //TODO
         return jsonObject;
     }
 
     @Override
-    public void fromJSON(JSONObject jsonObject){
+    public void fromJSON(JSONObject jsonObject) {
         try {
-            JSONArray r = jsonObject.getJSONArray("routes");
-            for (int i = 0; i < r.length(); i++){
+            JSONArray r = jsonObject.getJSONArray(getName());
+            for (int i = 0; i < r.length(); i++) {
                 routes.add((JSONObject) r.get(i));
             }
         } catch (JSONException e) {

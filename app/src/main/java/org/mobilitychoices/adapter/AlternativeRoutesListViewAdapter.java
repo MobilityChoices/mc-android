@@ -1,4 +1,4 @@
-package org.mobilitychoices;
+package org.mobilitychoices.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,20 +7,20 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
+import org.mobilitychoices.R;
 import org.mobilitychoices.entities.Route;
 
 import java.util.ArrayList;
 
-public class RouteListViewAdapter extends ArrayAdapter<Route> {
+public class AlternativeRoutesListViewAdapter extends ArrayAdapter<Route> {
 
     private Context context;
     private int resource;
     private ArrayList<Route> routes;
 
-    public RouteListViewAdapter(Context context, int resource, int id, ArrayList<Route> routes) {
+    public AlternativeRoutesListViewAdapter(Context context, int resource, int id, ArrayList<Route> routes) {
         super(context, resource, id, routes);
         this.context = context;
         this.resource = resource;
@@ -51,8 +51,8 @@ public class RouteListViewAdapter extends ArrayAdapter<Route> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.time.setText(route.getTime());
-
+        viewHolder.time.setText(route.getTime() + " min");
+        viewHolder.icons.removeAllViews();
         for (int i = route.getModes().size() - 1; i >= 0; i--) {
             String s = route.getModes().get(i);
             ImageView imgView = new ImageView(getContext());
@@ -76,6 +76,7 @@ public class RouteListViewAdapter extends ArrayAdapter<Route> {
                     break;
                 }
             }
+
             viewHolder.icons.addView(imgView, 0);
         }
 
