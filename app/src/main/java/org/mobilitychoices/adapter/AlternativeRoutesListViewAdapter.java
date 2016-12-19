@@ -52,7 +52,7 @@ public class AlternativeRoutesListViewAdapter extends ArrayAdapter<Route> {
         }
 
         viewHolder.time.setText(route.getTime() + " min");
-
+        viewHolder.icons.removeAllViews();
         for (int i = route.getModes().size() - 1; i >= 0; i--) {
             String s = route.getModes().get(i);
             ImageView imgView = new ImageView(getContext());
@@ -76,6 +76,7 @@ public class AlternativeRoutesListViewAdapter extends ArrayAdapter<Route> {
                     break;
                 }
             }
+
             viewHolder.icons.addView(imgView, 0);
         }
 

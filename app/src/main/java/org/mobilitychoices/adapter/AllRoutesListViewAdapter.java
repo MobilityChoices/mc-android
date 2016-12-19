@@ -57,7 +57,7 @@ public class AllRoutesListViewAdapter extends ArrayAdapter<Track> {
         TextView textViewEnd = new TextView(getContext());
         textViewEnd.setText(track.getEnd().getAddress());
 
-
+        viewHolder.fromTo.removeAllViews();
         viewHolder.fromTo.addView(textViewStart, 0);
         viewHolder.fromTo.addView(textViewEnd, 1);
         viewHolder.time.setText(track.getCreated());
