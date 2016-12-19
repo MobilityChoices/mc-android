@@ -13,7 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mobilitychoices.R;
 import org.mobilitychoices.adapter.AlternativeRoutesListViewAdapter;
-import org.mobilitychoices.entities.FullTrack;
 import org.mobilitychoices.entities.Location;
 import org.mobilitychoices.entities.Point;
 import org.mobilitychoices.entities.Route;

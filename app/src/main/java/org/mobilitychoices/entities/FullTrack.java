@@ -7,12 +7,12 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class FullTrack extends Entity implements Serializable{
+public class FullTrack extends Entity implements Serializable {
     private String owner;
     private ArrayList<Location> locations;
     private String created;
 
-    public FullTrack(){
+    public FullTrack() {
         locations = new ArrayList<>();
     }
 

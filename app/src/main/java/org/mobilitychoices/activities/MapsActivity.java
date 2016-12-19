@@ -42,7 +42,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         ArrayList<Location> locations1 = (ArrayList<Location>) getIntent().getExtras().getSerializable("locations");
         if (locations1 != null) {
             locations = locations1;
-        }else {
+        } else {
             FullTrack track = (FullTrack) (getIntent().getExtras().getSerializable("fullTrack"));
             if (track == null) {
                 dbFacade = DbFacade.getInstance(this);
@@ -100,7 +100,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     latLngs) {
                 po.add(l);
             }
-            if(isFullTrack){
+            if (isFullTrack) {
                 po.color(Color.BLUE);
             }
             googleMap.addPolyline(po);

@@ -3,8 +3,6 @@ package org.mobilitychoices.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,9 +22,7 @@ import org.mobilitychoices.remote.GetAllTracksTask;
 import org.mobilitychoices.remote.GetTrackTask;
 import org.mobilitychoices.remote.Response;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class AllRoutesActivty extends AppCompatActivity {
     private ListView listView;
@@ -52,7 +48,7 @@ public class AllRoutesActivty extends AppCompatActivity {
                 new GetTrackTask(new GetTrackTask.IGetTrackCallback() {
                     @Override
                     public void done(Response<Object> result) {
-                        System.out.println(((FullTrack)result.getData()).toJSON());
+                        System.out.println(((FullTrack) result.getData()).toJSON());
                         Intent intent = new Intent(AllRoutesActivty.this, MapsActivity.class);
                         intent.putExtra("fullTrack", (FullTrack) result.getData());
                         startActivity(intent);
@@ -73,14 +69,16 @@ public class AllRoutesActivty extends AppCompatActivity {
             @Override
             public void done(Response<Object> response) {
                 if (response != null) {
-                    if (response.getCode() == 200) {
-                        showTracks((TrackList) response.getData());
-                    } else {
-                        if (response.getCode() == 400) {
-                            //irgendwas fehlt origin oder dest
-                        } else {
+                    switch (response.getCode()) {
+                        case 200:
+                            showTracks((TrackList) response.getData());
+                            break;
+                        case 400:
+                            //TODO irgendwas fehlt origin oder dest
+                            break;
+                        default:
                             Toast.makeText(AllRoutesActivty.this.getApplicationContext(), String.valueOf(getString(R.string.internalServerError)), Toast.LENGTH_LONG).show();
-                        }
+                            break;
                     }
                 }
             }
@@ -89,11 +87,10 @@ public class AllRoutesActivty extends AppCompatActivity {
 
     private void showTracks(TrackList data) {
 
-        ArrayList<JSONObject> Jtracks = data.getRoutes();
+        ArrayList<JSONObject> jTracks = data.getRoutes();
         ArrayList<Track> tracks = new ArrayList<>();
 
-        for (JSONObject t :
-                Jtracks) {
+        for (JSONObject t : jTracks) {
             Track track = new Track();
             track.fromJSON(t);
             track.getStart().setAddress(track.getStart().getLatitude() + "&" + track.getStart().getLongitude());

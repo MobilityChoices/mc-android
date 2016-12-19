@@ -41,18 +41,17 @@ public class Track extends Entity {
             JSONObject startJSON = jsonObject.getJSONObject("start");
             JSONObject locationJSON = startJSON.getJSONObject("location");
             start = new Point(locationJSON.getDouble("lat"), locationJSON.getDouble("lon"));
+
             JSONObject endJSON = jsonObject.getJSONObject("end");
             JSONObject locationEndJSON = endJSON.getJSONObject("location");
             end = new Point(locationEndJSON.getDouble("lat"), locationEndJSON.getDouble("lon"));
 
-            JSONObject strings  = jsonObject.getJSONObject("strings");
+            JSONObject strings = jsonObject.getJSONObject("strings");
             duration = strings.getString("duration");
             created = strings.getString("created");
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     public String getId() {

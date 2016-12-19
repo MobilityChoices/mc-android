@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.util.Pair;
 
 import org.mobilitychoices.entities.FullTrack;
-import org.mobilitychoices.entities.TrackList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +22,7 @@ public class GetTrackTask extends AsyncTask<Void, Void, Response<Object>> {
 
     @Override
     protected Response<Object> doInBackground(Void... voids) {
-        String urlString = "/tracks/"+ id;
-        System.out.println("GetTrackTask in Background...");
+        String urlString = "/tracks/" + id;
         List<Pair<String, String>> headers = new ArrayList<>();
         headers.add(new Pair<>("Authorization", token));
 

@@ -53,7 +53,7 @@ public class Route extends Entity {
                 steps = new ArrayList<>();
                 //steps
                 JSONArray steps = object.getJSONArray("steps");
-                for (int j = 0; j < steps.length(); j++){
+                for (int j = 0; j < steps.length(); j++) {
                     Step step = new Step();
                     step.fromJSON(steps.getJSONObject(j));
                     this.steps.add(step);

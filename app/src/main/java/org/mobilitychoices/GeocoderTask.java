@@ -5,10 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 
-import org.json.JSONObject;
 import org.mobilitychoices.entities.Track;
-import org.mobilitychoices.remote.GetAllTracksTask;
-import org.mobilitychoices.remote.Response;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +15,7 @@ public class GeocoderTask extends AsyncTask<ArrayList<Track>, Object, ArrayList<
 
     private IGeocoderCallback iGeocoderCallback;
     private Context context;
+
     public GeocoderTask(IGeocoderCallback callback, Context c) {
         iGeocoderCallback = callback;
         context = c;
@@ -30,24 +28,20 @@ public class GeocoderTask extends AsyncTask<ArrayList<Track>, Object, ArrayList<
         for (Track t :
                 tracks) {
             System.out.println("Geocoder loop: " + t.getId());
-            Geocoder geocoder;
-            List<Address> addresses1;
-            List<Address> addresses2;
-            geocoder = new Geocoder(context);
+            Geocoder geocoder = new Geocoder(context);
+            List<Address> startAddress;
+            List<Address> endAddress;
             try {
-                addresses1 = geocoder.getFromLocation(t.getStart().getLatitude(),
+                startAddress = geocoder.getFromLocation(t.getStart().getLatitude(),
                         t.getStart().getLongitude(), 1);
-                String address = addresses1.get(0).getThoroughfare();
-                String city = addresses1.get(0).getLocality();
-                System.out.println(addresses1.get(0).toString());
+                String address = startAddress.get(0).getThoroughfare();
+                String city = startAddress.get(0).getLocality();
 
                 t.getStart().setAddress(address + ", " + city);
-
-                addresses2 = geocoder.getFromLocation(t.getEnd().getLatitude(),
+                endAddress = geocoder.getFromLocation(t.getEnd().getLatitude(),
                         t.getEnd().getLongitude(), 1);
-                String address2 = addresses2.get(0).getThoroughfare();
-                String city2 = addresses2.get(0).getLocality();
-
+                String address2 = endAddress.get(0).getThoroughfare();
+                String city2 = endAddress.get(0).getLocality();
                 t.getEnd().setAddress(address2 + ", " + city2);
             } catch (IOException e) {
                 e.printStackTrace();

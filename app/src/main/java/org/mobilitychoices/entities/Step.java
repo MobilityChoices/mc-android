@@ -18,8 +18,8 @@ public class Step extends Entity {
     public void fromJSON(JSONObject jsonObject) {
         try {
             distance = jsonObject.getInt("distance");
-            duration  =jsonObject.getInt("duration");
-            travelmode= jsonObject.getString("travelMode");
+            duration = jsonObject.getInt("duration");
+            travelmode = jsonObject.getString("travelMode");
 
             JSONObject start = jsonObject.getJSONObject("start");
             JSONObject locStart = start.getJSONObject("location");
@@ -31,7 +31,7 @@ public class Step extends Entity {
 
             JSONArray subs = jsonObject.getJSONArray("steps");
             substeps = new ArrayList<>();
-            for (int i = 0; i < subs.length(); i++){
+            for (int i = 0; i < subs.length(); i++) {
                 Step step = new Step();
                 step.fromJSON(subs.getJSONObject(i));
                 substeps.add(step);
