@@ -5,18 +5,28 @@
     android:id="@+id/content_all_routes_activty"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="org.mobilitychoices.activities.AllRoutesActivty"
     tools:showIn="@layout/activity_all_routes_activty">
 
-    <ListView
+    <ProgressBar
+        android:id="@+id/allRoutes_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/allRoutesListView"/>
-
+        android:layout_margin="0dp"
+        android:id="@+id/allRoutes_view">
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/allRoutesListView"/>
+    </LinearLayout>
 </RelativeLayout>

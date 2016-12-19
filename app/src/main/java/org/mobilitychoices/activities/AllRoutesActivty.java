@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 import org.mobilitychoices.GeocoderTask;
+import org.mobilitychoices.ProgressCircle;
 import org.mobilitychoices.R;
 import org.mobilitychoices.adapter.AllRoutesListViewAdapter;
 import org.mobilitychoices.entities.FullTrack;
@@ -28,11 +29,17 @@ public class AllRoutesActivty extends AppCompatActivity {
     private ListView listView;
     private AllRoutesListViewAdapter adapter;
     private SharedPreferences sharedPref;
+    private ProgressCircle progressCircle;
+    private View mProgress;
+    private View mAllRoutes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_routes_activty);
+        mProgress = findViewById(R.id.allRoutes_progress);
+        mAllRoutes = findViewById(R.id.allRoutes_view);
+        progressCircle = new ProgressCircle(mAllRoutes, mProgress);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -61,9 +68,11 @@ public class AllRoutesActivty extends AppCompatActivity {
     }
 
     private void requestTracks(String token) {
+        progressCircle.showProgress(true);
         new GetAllTracksTask(new GetAllTracksTask.IGetAllTracksCallback() {
             @Override
             public void done(Response<Object> response) {
+
                 if (response != null) {
                     switch (response.getCode()) {
                         case 200:
@@ -96,6 +105,7 @@ public class AllRoutesActivty extends AppCompatActivity {
         new GeocoderTask(new GeocoderTask.IGeocoderCallback() {
             @Override
             public void done(ArrayList<Track> response) {
+                progressCircle.showProgress(false);
                 adapter.clear();
                 adapter.addAll(response);
             }

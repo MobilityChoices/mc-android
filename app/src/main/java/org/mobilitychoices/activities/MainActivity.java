@@ -33,6 +33,7 @@ import org.mobilitychoices.database.DbFacade;
 import org.mobilitychoices.entities.Location;
 import org.mobilitychoices.remote.UploadTrackTask;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -263,8 +264,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     protected void handleNewLocation(Location location) {
-        latitude.setText(String.format("%s%s", getString(R.string.latitude), String.valueOf(location.getLatitude())));
-        longitude.setText(String.format("%s%s", getString(R.string.longitude), String.valueOf(location.getLongitude())));
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
+        DecimalFormat f = new DecimalFormat("###.000000");
+        latitude.setText(String.format("%s%s", getString(R.string.latitude), f.format(lat)));
+        longitude.setText(String.format("%s%s", getString(R.string.longitude), f.format(lng)));
 
         long currentTimeMillis = System.currentTimeMillis();
         Date date = new Date(currentTimeMillis);

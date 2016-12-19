@@ -14,13 +14,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
-public class Connection<T extends Entity> {
+class Connection<T extends Entity> {
 
-    public Response request(String urlString, JSONObject object, List<Pair<String, String>> headers, Class<T> cls) {
+    Response request(String urlString, JSONObject object, List<Pair<String, String>> headers, Class<T> cls) {
         return request(urlString, object, headers, cls, "POST");
     }
 
-    public Response request(String urlString, JSONObject object, List<Pair<String, String>> headers, Class<T> cls, String requestMethod) {
+    Response request(String urlString, JSONObject object, List<Pair<String, String>> headers, Class<T> cls, String requestMethod) {
         Response<T> response = null;
 
         try {
@@ -53,7 +53,6 @@ public class Connection<T extends Entity> {
             }
 
             int responseCode = conn.getResponseCode();
-            System.out.println("ResponseCode: " + responseCode);
 
             BufferedReader bufferedReader;
             if (200 <= conn.getResponseCode() && conn.getResponseCode() <= 299) {
@@ -64,7 +63,7 @@ public class Connection<T extends Entity> {
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line + "\n");
+                sb.append(line).append("\n");
             }
             bufferedReader.close();
             String result = sb.toString();
@@ -75,25 +74,16 @@ public class Connection<T extends Entity> {
                 ex.printStackTrace();
             }
 
-            if (jsonResult != null) {
-                System.out.println(jsonResult.toString(4));
-            }
-
             T data = null;
             ResponseError error = null;
             if (200 <= responseCode && responseCode <= 299) {
-                data = (T) cls.newInstance();
+                data = cls.newInstance();
                 data.fromJSON(jsonResult);
             } else {
                 error = new ResponseError("", "", "");
             }
-
             response = new Response<>(responseCode, data, error);
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (IOException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
         return response;
