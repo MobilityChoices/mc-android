@@ -57,7 +57,6 @@ public class AllRoutesActivty extends AppCompatActivity {
         ArrayList<Track> arrayOfTracks = new ArrayList<Track>();
         adapter = new AllRoutesListViewAdapter(this, R.layout.list_item, 0, arrayOfTracks);
         listView.setAdapter(adapter);
-
         requestTracks(token);
     }
 

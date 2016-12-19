@@ -39,7 +39,6 @@ public class DirectionsActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.routesListView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "An item of the ListView is clicked.", Toast.LENGTH_LONG).show();
                 Route route = adapter.getItem(position);
                 System.out.println(route.getModes() + " --> " + route.getTime());
 
