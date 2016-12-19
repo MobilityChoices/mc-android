@@ -1,5 +1,6 @@
 package org.mobilitychoices.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,8 +13,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mobilitychoices.R;
 import org.mobilitychoices.adapter.AlternativeRoutesListViewAdapter;
+import org.mobilitychoices.entities.FullTrack;
+import org.mobilitychoices.entities.Location;
+import org.mobilitychoices.entities.Point;
 import org.mobilitychoices.entities.Route;
 import org.mobilitychoices.entities.RoutesList;
+import org.mobilitychoices.entities.Step;
 import org.mobilitychoices.remote.DirectionsTask;
 import org.mobilitychoices.remote.Response;
 
@@ -39,6 +44,20 @@ public class DirectionsActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "An item of the ListView is clicked.", Toast.LENGTH_LONG).show();
                 Route route = adapter.getItem(position);
                 System.out.println(route.getModes() + " --> " + route.getTime());
+
+                Intent intent = new Intent(DirectionsActivity.this, MapsActivity.class);
+                ArrayList<Location> locations = new ArrayList<Location>();
+                ArrayList<Step> steps = route.getSteps();
+                for(int i = 0; i < steps.size(); i++){
+                    Step current = steps.get(i);
+                    Location location = new Location(current.getStart().getLatitude(), current.getStart().getLongitude(), 0, 0, 0);
+                    locations.add(location);
+                }
+                Point end  =steps.get(steps.size()-1).getEnd();
+                Location endPoint = new Location(end.getLatitude(), end.getLongitude(), 0, 0, 0);
+                locations.add(endPoint);
+                intent.putExtra("locations", locations);
+                startActivity(intent);
             }
         });
 

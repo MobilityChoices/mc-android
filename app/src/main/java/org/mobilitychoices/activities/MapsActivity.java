@@ -39,17 +39,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        FullTrack track = (FullTrack) (getIntent().getExtras().getSerializable("fullTrack"));
-        if(track == null){
-            dbFacade = DbFacade.getInstance(this);
-            long currentTrack = (long) getIntent().getExtras().get("currentTrack");
-            locations = dbFacade.getTrack(currentTrack);
-            isFullTrack = false;
-        }else{
-            locations = track.getLocations();
-            isFullTrack= true;
+        ArrayList<Location> locations1 = (ArrayList<Location>) getIntent().getExtras().getSerializable("locations");
+        if (locations1 != null) {
+            locations = locations1;
+        }else {
+            FullTrack track = (FullTrack) (getIntent().getExtras().getSerializable("fullTrack"));
+            if (track == null) {
+                dbFacade = DbFacade.getInstance(this);
+                long currentTrack = (long) getIntent().getExtras().get("currentTrack");
+                locations = dbFacade.getTrack(currentTrack);
+                isFullTrack = false;
+            } else {
+                locations = track.getLocations();
+                isFullTrack = true;
+            }
         }
-
         showAlternativesBtn = (Button) findViewById(R.id.showAlternativesBtn);
         showAlternativesBtn.setOnClickListener(new View.OnClickListener() {
             @Override

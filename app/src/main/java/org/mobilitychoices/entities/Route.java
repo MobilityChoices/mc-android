@@ -10,6 +10,7 @@ public class Route extends Entity {
 
     private String time;
     private ArrayList<String> modes;
+    private ArrayList<Step> steps;
 
     public Route(JSONObject routes) {
         modes = new ArrayList<>();
@@ -48,6 +49,15 @@ public class Route extends Entity {
                 JSONObject object = (JSONObject) legs.get(i);
                 int timeInSec = object.getInt("duration") / 60;
                 time = timeInSec + "";
+
+                steps = new ArrayList<>();
+                //steps
+                JSONArray steps = object.getJSONArray("steps");
+                for (int j = 0; j < steps.length(); j++){
+                    Step step = new Step();
+                    step.fromJSON(steps.getJSONObject(j));
+                    this.steps.add(step);
+                }
             }
             JSONArray travelModes = jsonObject.getJSONArray("travelMode");
             for (int i = 0; i < travelModes.length(); i++) {
@@ -56,5 +66,9 @@ public class Route extends Entity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<Step> getSteps() {
+        return steps;
     }
 }
