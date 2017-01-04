@@ -17,6 +17,9 @@ import org.mobilitychoices.remote.RegisterTask;
 import org.mobilitychoices.remote.Response;
 import org.mobilitychoices.remote.ResponseError;
 
+/*
+This class is responsible for the register-screen, to create a new User and save it on the server
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText email_EditText;

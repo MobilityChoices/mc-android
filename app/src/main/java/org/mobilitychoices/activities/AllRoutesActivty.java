@@ -24,7 +24,9 @@ import org.mobilitychoices.remote.GetTrackTask;
 import org.mobilitychoices.remote.Response;
 
 import java.util.ArrayList;
-
+/*
+This activity contains the listview with all the routes, which the user has tracked in the past.
+ */
 public class AllRoutesActivty extends AppCompatActivity {
     private ListView listView;
     private AllRoutesListViewAdapter adapter;

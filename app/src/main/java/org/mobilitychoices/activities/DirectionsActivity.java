@@ -22,7 +22,9 @@ import org.mobilitychoices.remote.DirectionsTask;
 import org.mobilitychoices.remote.Response;
 
 import java.util.ArrayList;
-
+/*
+    This class contains the listView for all alternative Routes.
+ */
 public class DirectionsActivity extends AppCompatActivity {
 
     private ListView listView;

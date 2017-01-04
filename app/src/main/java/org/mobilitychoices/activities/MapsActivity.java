@@ -22,7 +22,9 @@ import org.mobilitychoices.entities.FullTrack;
 import org.mobilitychoices.entities.Location;
 
 import java.util.ArrayList;
-
+/*
+This class shows the google maps and draws the specified route.
+ */
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private ArrayList<Location> locations;

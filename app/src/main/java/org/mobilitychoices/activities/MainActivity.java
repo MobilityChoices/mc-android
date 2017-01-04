@@ -38,7 +38,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-
+/*
+This class is the activity for the main screen. It contains the GPS Tracking (Start, Stop..)
+ */
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener, android.location.LocationListener {
 
     private GoogleApiClient googleApiClient;
